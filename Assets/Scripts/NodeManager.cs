@@ -6,16 +6,55 @@ using UnityEngine.UI;
 public class NodeManager : MonoBehaviour
 {
     public Transform contentArea;
+    public Transform buttonArea;
     public GameObject nodePrefab;
 
 
     public List<NodeObject> nodeObjects;
 
-    public void NewNode()
+    void Start()
     {
+        foreach(Text tx in buttonArea.GetComponentsInChildren<Text>())
+        {
+            tx.text = tx.transform.parent.name;
+            System.Type t = System.Type.GetType("Node_" + tx.text);
+            if(t == null)
+            {
+                tx.transform.parent.GetComponent<Button>().interactable = false;
+            }
+        }
+    }
+
+    public void CreateNode(string _nodeClassName)
+    {
+        System.Type t = System.Type.GetType(_nodeClassName);
+        if(t == null)
+        {
+            Debug.LogWarning("Could not create node of type '" + _nodeClassName + "'!");
+            return;
+        }
         GameObject newNode = Instantiate(nodePrefab, contentArea);
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
-        newNode.GetComponent<NodeObject>().Init(new Node_Add());
+        newNode.GetComponent<NodeObject>().Init((Node)System.Activator.CreateInstance(t));
+    }
+    public void CreateNode(Button _button)
+    {
+        CreateNode("Node_" + _button.transform.name);
+    }
+
+    public void AlignToGrid()
+    {
+        foreach(NodeObject node in nodeObjects)
+        {
+            Vector3 pos = node.transform.position;
+            pos.x *= 0.5f;
+            pos.y *= 0.5f;
+            pos.x = Mathf.RoundToInt(pos.x);
+            pos.y = Mathf.RoundToInt(pos.y);
+            pos.x *= 2f;
+            pos.y *= 2f;
+            node.transform.position = pos;
+        }
     }
 
     void Update()
