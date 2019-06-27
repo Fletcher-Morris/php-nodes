@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Node_Add : Node
+
+public class Node_Subtract : Node
 {
     public override void Setup()
     {
-        nodeName = "ADD";
+        nodeName = "SUBTRACT";
         width = 150;
         //  Set up inputs
         {

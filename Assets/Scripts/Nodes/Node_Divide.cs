@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Node_Add : Node
+
+public class Node_Divide : Node
 {
     public override void Setup()
     {
-        nodeName = "ADD";
+        nodeName = "DIVIDE";
         width = 150;
         //  Set up inputs
         {

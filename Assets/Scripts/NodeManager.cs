@@ -46,15 +46,31 @@ public class NodeManager : MonoBehaviour
     {
         foreach(NodeObject node in nodeObjects)
         {
-            Vector3 pos = node.transform.position;
+            Vector3 pos = node.transform.localPosition;
             pos.x *= 0.5f;
             pos.y *= 0.5f;
             pos.x = Mathf.RoundToInt(pos.x);
             pos.y = Mathf.RoundToInt(pos.y);
             pos.x *= 2f;
             pos.y *= 2f;
-            node.transform.position = pos;
+            node.transform.localPosition = pos;
         }
+    }
+    public void Recenter()
+    {
+        StartCoroutine(RecenterCoroutine());
+    }
+    private IEnumerator RecenterCoroutine()
+    {
+        Vector3 diff = contentArea.transform.position;
+        while(diff.magnitude >= 0.1f)
+        {
+            contentArea.transform.position = Vector3.Lerp(contentArea.transform.position, Vector3.zero, Time.deltaTime * 10.0f);
+            diff = contentArea.transform.position;
+            yield return new WaitForEndOfFrame();
+        }
+        contentArea.transform.position = Vector3.zero;
+        yield return null;
     }
 
     void Update()
