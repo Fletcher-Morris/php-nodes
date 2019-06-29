@@ -18,6 +18,9 @@ public class NodeManager : MonoBehaviour
 
     public Linker linkingConnection;
     public bool draggingConnection;
+    public NodeObject movingNode;
+
+    private int currentZoomLevel = 1;
 
     public float minConnectorDist = 10.0f;
 
@@ -106,24 +109,11 @@ public class NodeManager : MonoBehaviour
             return;
         }
         GameObject newNode = Instantiate(nodePrefab, contentArea);
-        Vector3 pos = -contentArea.transform.localPosition;
-        bool foundPos = false;
-        while(foundPos == false)
-        {
-            foundPos = true;
-            foreach(NodeObject obj in nodeObjects)
-            {
-                if(pos == obj.transform.localPosition)
-                {
-                    foundPos = false;
-                    pos.x += 20;
-                    pos.y -= 20;
-                }
-            }
-        }
+        Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         newNode.transform.localPosition = pos;
         newNode.GetComponent<NodeObject>().Init((Node)System.Activator.CreateInstance(t));
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
+        movingNode = newNode.GetComponent<NodeObject>();
     }
     public void CreateNode(Button _button)
     {
@@ -139,12 +129,14 @@ public class NodeManager : MonoBehaviour
     }
     public Vector3 Align(Vector3 pos)
     {
-        pos.x *= 0.5f;
-        pos.y *= 0.5f;
+        float grid = 150f / 2.0f;
+        float scale = 1.0f / grid;
+        pos.x *= scale;
+        pos.y *= scale;
         pos.x = Mathf.RoundToInt(pos.x);
         pos.y = Mathf.RoundToInt(pos.y);
-        pos.x *= 2f;
-        pos.y *= 2f;
+        pos.x *= grid;
+        pos.y *= grid;
         return pos;
     }
     public void Recenter()
@@ -154,24 +146,38 @@ public class NodeManager : MonoBehaviour
     private IEnumerator RecenterCoroutine()
     {
         Vector3 diff = contentArea.transform.position;
+        diff.z = 0.0f;
         while(diff.magnitude >= 0.1f)
         {
-            contentArea.transform.position = Vector3.Lerp(contentArea.transform.position, Vector3.zero, Time.deltaTime * 20.0f);
-            diff = contentArea.transform.position;
+            contentArea.transform.localPosition = Vector3.Lerp(contentArea.transform.localPosition, Vector3.zero, Time.deltaTime * 20.0f);
+            diff = contentArea.transform.localPosition;
             yield return new WaitForEndOfFrame();
         }
-        contentArea.transform.position = Vector3.zero;
+        contentArea.transform.localPosition = Vector3.zero;
         yield return null;
     }
 
     void Update()
     {
-        DragConnection();
+        if (movingNode != null) MoveNode();
+        else DragConnection();
         scrollView.horizontal = !draggingConnection;
         scrollView.vertical = !draggingConnection;
         foreach(NodeObject node in nodeObjects)
         {
             node.DrawVisual();
+        }
+    }
+
+    private void MoveNode()
+    {
+        Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        newPos.y += (movingNode.transform.position.y - movingNode.moveButton.transform.position.y);
+        newPos.z = 10.0f;
+        movingNode.transform.position = Vector3.Lerp(movingNode.transform.position, newPos, 20.0f * Time.deltaTime);
+        if (Input.GetMouseButtonDown(0))
+        {
+            movingNode = null;
         }
     }
 
@@ -181,12 +187,13 @@ public class NodeManager : MonoBehaviour
         {
             draggingConnection = false;
             linkingConnection = null;
-            Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
             GameObject c = GetClosestLinker(pos);
             if(c != null)
             {
                 Linker closest = c.GetComponent<Linker>();
-                if(Vector3.Distance(closest.transform.position, pos) <= minConnectorDist)
+                Vector2 p = closest.transform.position;
+                if (Vector3.Distance(p, pos) <= minConnectorDist)
                 {
                     linkingConnection = closest;
                     draggingConnection = true;
@@ -212,9 +219,10 @@ public class NodeManager : MonoBehaviour
         {
             if(linkingConnection != null && draggingConnection == true)
             {
-                Vector3 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 Linker closest = GetClosestLinker(pos).GetComponent<Linker>();
-                if(Vector3.Distance(closest.transform.position, pos) <= minConnectorDist)
+                Vector2 p = closest.transform.position;
+                if (Vector3.Distance(p, pos) <= minConnectorDist)
                 {
                     FormLink(linkingConnection, closest);
                 }
@@ -233,5 +241,35 @@ public class NodeManager : MonoBehaviour
     {
         if(linkingConnection == null) return;
         Gizmos.DrawIcon(linkingConnection.gameObject.transform.position, "Light Gizmo.tiff", true);
+    }
+
+    public void ZoomOut()
+    {
+        currentZoomLevel *= 2;
+        currentZoomLevel = Mathf.Clamp(currentZoomLevel, 1, 4);
+        StartCoroutine(Zoom((float)(1.0f/(float)currentZoomLevel)));
+    }
+    public void ZoomIn()
+    {
+        currentZoomLevel /= 2;
+        currentZoomLevel = Mathf.Clamp(currentZoomLevel, 1, 4);
+        StartCoroutine(Zoom((float)(1.0f/(float)currentZoomLevel)));
+    }
+    private IEnumerator Zoom(float scale)
+    {
+        float diff = Mathf.Abs(contentArea.localScale.x - scale);
+        while(diff >= 0.01f)
+        {
+            float s = Mathf.MoveTowards(contentArea.localScale.x, scale, 5.0f * Time.deltaTime);
+            Vector3 newScale = contentArea.localScale;
+            newScale.x = s;
+            newScale.y = s;
+            newScale.z = 1.0f;
+            contentArea.localScale = newScale;
+            diff = Mathf.Abs(contentArea.localScale.x - scale);
+            yield return new WaitForEndOfFrame();
+        }
+
+        yield return null;
     }
 }

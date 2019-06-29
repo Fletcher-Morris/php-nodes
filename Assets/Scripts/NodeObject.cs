@@ -6,22 +6,23 @@ using UnityEngine.UI;
 
 public class NodeObject : MonoBehaviour
 {
-    [SerializeField] private int m_nodeUniqueId;
+    private int m_nodeUniqueId;
     public int GetUniqueId(){return m_nodeUniqueId;}
-    [SerializeField] private Node m_node;
+    private Node m_node;
     public Node GetNode(){return m_node;}
-    [SerializeField] private bool m_initialized;
-
+    private bool m_initialized;
     public List<GameObject> inObjects;
     public List<GameObject> outObjects;
-
     [SerializeField] private GameObject connectionSprite;
-    [SerializeField] private Text nameText;
-    [SerializeField] private float connectorSpacing = 0.1f;
-
-    private Vector3 lineOffset;
-
-    private Transform connectorParent;
+    public Text nameText;
+    public Button moveButton;
+    public Button deleteButton;
+    private float connectorSpacing = 0.1f;
+    public Vector3 lineOffset;
+    public Transform inputTransform;
+    public Transform outputTransform;
+    public GameObject boolUiPrefab;
+    public Image shadow;
 
     public void Init(Node _nodeType)
     {
@@ -51,10 +52,11 @@ public class NodeObject : MonoBehaviour
 
     void Refresh()
     {
-        lineOffset = Vector3.zero;
-        lineOffset.z = -5.0f;
-        connectorParent = transform.Find("Connectors");
-        foreach(Transform child in connectorParent)
+        foreach(Transform child in inputTransform)
+        {
+            Destroy(child.gameObject);
+        }
+        foreach (Transform child in outputTransform)
         {
             Destroy(child.gameObject);
         }
@@ -63,11 +65,11 @@ public class NodeObject : MonoBehaviour
         int inputs = m_node.inConnections.Count;
         foreach(NodeConnection input in m_node.inConnections)
         {
-            GameObject newObject = Instantiate(connectionSprite, connectorParent);
+            GameObject newObject = Instantiate(connectionSprite, inputTransform);
             newObject.name = "Node_" + GetUniqueId() + "_Input_" + i.ToString();
+            newObject.transform.GetChild(0).GetComponent<Text>().text = input.connectionName;
             Vector3 pos = Vector3.zero;
             pos.x = (float)m_node.width * -0.5f;
-            pos.y = 75 - (connectorSpacing * i);
             newObject.transform.localPosition = pos;
             input.connectionObject = newObject;
             newObject.GetComponent<Linker>().node = this;
@@ -79,11 +81,11 @@ public class NodeObject : MonoBehaviour
         int outputs = m_node.inConnections.Count;
         foreach(NodeConnection output in m_node.outConnections)
         {
-            GameObject newObject = Instantiate(connectionSprite, connectorParent);
+            GameObject newObject = Instantiate(connectionSprite, outputTransform);
             newObject.name = "Node_" + GetUniqueId() + "_Output_" + i.ToString();
+            newObject.transform.GetChild(1).GetComponent<Text>().text = output.connectionName;
             Vector3 pos = Vector3.zero;
             pos.x = (float)m_node.width * 0.5f;
-            pos.y = 75 - (connectorSpacing * i);
             newObject.transform.localPosition = pos;
             output.connectionObject = newObject;
             newObject.GetComponent<Linker>().node = this;
@@ -97,8 +99,14 @@ public class NodeObject : MonoBehaviour
     {
         if(m_initialized == false) return;
 
-        
-        foreach(NodeConnection input in m_node.inConnections)
+        foreach (Button btn in transform.GetComponentsInChildren<Button>()) { btn.interactable = NodeManager.Singleton.movingNode == null; }
+        foreach (InputField field in transform.GetComponentsInChildren<InputField>()) { field.interactable = NodeManager.Singleton.movingNode == null; }
+        foreach (Toggle tog in transform.GetComponentsInChildren<Toggle>()) { tog.interactable = NodeManager.Singleton.movingNode == null; }
+        foreach (Dropdown drop in transform.GetComponentsInChildren<Dropdown>()) { drop.interactable = NodeManager.Singleton.movingNode == null; }
+        foreach (Slider slid in transform.GetComponentsInChildren<Slider>()) { slid.interactable = NodeManager.Singleton.movingNode == null; }
+        shadow.enabled = NodeManager.Singleton.movingNode == this;
+
+        foreach (NodeConnection input in m_node.inConnections)
         {
             LineRenderer lR = input.connectionObject.GetComponent<LineRenderer>();
             if(input.linkedConnection != null)
@@ -112,7 +120,9 @@ public class NodeObject : MonoBehaviour
                 lR.startColor = Global.ConnectionColor(input.dataType);
                 lR.endColor = Global.ConnectionColor(input.dataType);
                 lR.SetPosition(0, input.connectionObject.transform.position + lineOffset);
-                lR.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Vector3 cP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                cP.z = 0.0f;
+                lR.SetPosition(1, cP);
             }
             else
             {
@@ -128,9 +138,15 @@ public class NodeObject : MonoBehaviour
                 //  Draw Lines
                 lR.enabled = true;
                 lR.startColor = Global.ConnectionColor(output.dataType);
-                lR.endColor = Global.ConnectionColor(output.dataType);
-                lR.SetPosition(0, output.connectionObject.transform.position + lineOffset);
-                lR.SetPosition(1, output.linkedConnection.connectionObject.transform.position + lineOffset);
+                lR.endColor = Global.ConnectionColor(output.linkedConnection.dataType);
+                Vector3 n1 = output.connectionObject.transform.position;
+                n1.z = 0.0f;
+                lR.SetPosition(0, n1);
+                Vector3 n2 = output.connectionObject.transform.position;
+                if (output.linkedConnection != null) n2 = output.linkedConnection.connectionObject.transform.position;
+                else n2 = output.connectionObject.transform.position;
+                n2.z = 0.0f;
+                lR.SetPosition(1, n2);
             }
             else if(output.linker == NodeManager.Singleton.linkingConnection)
             {
@@ -138,8 +154,12 @@ public class NodeObject : MonoBehaviour
                 lR.enabled = true;
                 lR.startColor = Global.ConnectionColor(output.dataType);
                 lR.endColor = Global.ConnectionColor(output.dataType);
-                lR.SetPosition(0, output.connectionObject.transform.position + lineOffset);
-                lR.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
+                Vector3 nP = output.connectionObject.transform.position;
+                nP.z = 0.0f;
+                lR.SetPosition(0, nP);
+                Vector3 cP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                cP.z = 0.0f;
+                lR.SetPosition(1, cP);
             }
             else
             {
@@ -152,5 +172,11 @@ public class NodeObject : MonoBehaviour
     {
         NodeManager.Singleton.nodeObjects.Remove(this);
         GameObject.Destroy(gameObject);
+    }
+
+    public void MoveNode()
+    {
+        transform.SetAsLastSibling();
+        NodeManager.Singleton.movingNode = this;
     }
 }

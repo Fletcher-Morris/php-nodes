@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Node_Bool : Node
 {
+    Toggle toggle;
+
     public override void Setup()
     {
         nodeName = "BOOL";
         width = 150;
+        GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.transform);
+        toggle = obj.GetComponent<Toggle>();
         //  Set up inputs
         {
             inConnections= new List<NodeConnection>();
@@ -26,6 +31,6 @@ public class Node_Bool : Node
 
     public override void Serialize()
     {
-        
+        bool value = toggle.isOn;
     }
 }

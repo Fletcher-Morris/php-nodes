@@ -2,31 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public static class Global
-{    
-    public static int STATIC_NODE_ID;
-
-    public static Color ConnectionColor(DataType _type)
-    {
-        switch(_type)
-        {
-            case DataType.StringType:
-                return Color.white;
-            case DataType.IntType:
-                return Color.blue;
-            case DataType.BoolType:
-                return Color.green;
-            case DataType.FloatType:
-                return Color.cyan;
-            case DataType.ClassType:
-                return Color.red;
-            case DataType.ConType:
-                return Color.yellow;
-        }
-        return Color.gray;
-    }
-}
-
 [System.Serializable]
 public abstract class Node
 {
