@@ -16,8 +16,12 @@ public class NodeObject : MonoBehaviour
     public List<GameObject> outObjects;
 
     [SerializeField] private GameObject connectionSprite;
+    [SerializeField] private Text nameText;
     [SerializeField] private float connectorSpacing = 0.1f;
-    
+
+    private Vector3 lineOffset;
+
+    private Transform connectorParent;
 
     public void Init(Node _nodeType)
     {
@@ -27,6 +31,7 @@ public class NodeObject : MonoBehaviour
         m_node.SetObject(this);
         m_node.Setup();
         gameObject.name = "NODE_" + _nodeType.nodeName;
+        nameText.text = _nodeType.nodeName;
         Refresh();
         m_initialized = true;
     }
@@ -46,7 +51,10 @@ public class NodeObject : MonoBehaviour
 
     void Refresh()
     {
-        foreach(Transform child in transform)
+        lineOffset = Vector3.zero;
+        lineOffset.z = -5.0f;
+        connectorParent = transform.Find("Connectors");
+        foreach(Transform child in connectorParent)
         {
             Destroy(child.gameObject);
         }
@@ -55,13 +63,15 @@ public class NodeObject : MonoBehaviour
         int inputs = m_node.inConnections.Count;
         foreach(NodeConnection input in m_node.inConnections)
         {
-            GameObject newObject = Instantiate(connectionSprite, transform);
-            newObject.name = "Node_In_" + i.ToString();
+            GameObject newObject = Instantiate(connectionSprite, connectorParent);
+            newObject.name = "Node_" + GetUniqueId() + "_Input_" + i.ToString();
             Vector3 pos = Vector3.zero;
             pos.x = (float)m_node.width * -0.5f;
             pos.y = 75 - (connectorSpacing * i);
             newObject.transform.localPosition = pos;
             input.connectionObject = newObject;
+            newObject.GetComponent<Linker>().node = this;
+            newObject.GetComponent<Linker>().connection = input;
             inObjects.Add(newObject);
             i++;
         }
@@ -69,13 +79,15 @@ public class NodeObject : MonoBehaviour
         int outputs = m_node.inConnections.Count;
         foreach(NodeConnection output in m_node.outConnections)
         {
-            GameObject newObject = Instantiate(connectionSprite, transform);
-            newObject.name = "Node_Out_" + i.ToString();
+            GameObject newObject = Instantiate(connectionSprite, connectorParent);
+            newObject.name = "Node_" + GetUniqueId() + "_Output_" + i.ToString();
             Vector3 pos = Vector3.zero;
             pos.x = (float)m_node.width * 0.5f;
             pos.y = 75 - (connectorSpacing * i);
             newObject.transform.localPosition = pos;
             output.connectionObject = newObject;
+            newObject.GetComponent<Linker>().node = this;
+            newObject.GetComponent<Linker>().connection = output;
             outObjects.Add(newObject);
             i++;
         }
@@ -85,15 +97,26 @@ public class NodeObject : MonoBehaviour
     {
         if(m_initialized == false) return;
 
+        
         foreach(NodeConnection input in m_node.inConnections)
         {
+            LineRenderer lR = input.connectionObject.GetComponent<LineRenderer>();
             if(input.linkedConnection != null)
             {
-
+                lR.enabled = false;
+            }
+            else if(input.linker == NodeManager.Singleton.linkingConnection)
+            {
+                //  Draw Line
+                lR.enabled = true;
+                lR.startColor = Global.ConnectionColor(input.dataType);
+                lR.endColor = Global.ConnectionColor(input.dataType);
+                lR.SetPosition(0, input.connectionObject.transform.position + lineOffset);
+                lR.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
             }
             else
             {
-
+                lR.enabled = false;
             }
         }
 
@@ -106,13 +129,28 @@ public class NodeObject : MonoBehaviour
                 lR.enabled = true;
                 lR.startColor = Global.ConnectionColor(output.dataType);
                 lR.endColor = Global.ConnectionColor(output.dataType);
-                lR.SetPosition(0, output.connectionObject.transform.position);
-                lR.SetPosition(1, output.linkedConnection.connectionObject.transform.position);
+                lR.SetPosition(0, output.connectionObject.transform.position + lineOffset);
+                lR.SetPosition(1, output.linkedConnection.connectionObject.transform.position + lineOffset);
+            }
+            else if(output.linker == NodeManager.Singleton.linkingConnection)
+            {
+                //  Draw Lines
+                lR.enabled = true;
+                lR.startColor = Global.ConnectionColor(output.dataType);
+                lR.endColor = Global.ConnectionColor(output.dataType);
+                lR.SetPosition(0, output.connectionObject.transform.position + lineOffset);
+                lR.SetPosition(1, Camera.main.ScreenToWorldPoint(Input.mousePosition));
             }
             else
             {
                 lR.enabled = false;
             }
         }
+    }
+
+    public void DeleteNode()
+    {
+        NodeManager.Singleton.nodeObjects.Remove(this);
+        GameObject.Destroy(gameObject);
     }
 }
