@@ -126,7 +126,25 @@ public class NodeObject : MonoBehaviour
             LineRenderer lR = input.connectionObject.GetComponent<LineRenderer>();
             if(input.linkedConnection != null)
             {
-                lR.enabled = false;
+                if(input.linkedConnection.connectionObject != null)
+                {
+                    //  Draw Lines
+                    lR.enabled = true;
+                    lR.startColor = Global.ConnectionColor(input.linkedConnection.dataType);
+                    lR.endColor = Global.ConnectionColor(input.dataType);
+                    Vector3 n1 = input.connectionObject.transform.position;
+                    n1.z = 0.0f;
+                    Vector3 n2 = input.connectionObject.transform.position;
+                    if (input.linkedConnection != null) n2 = input.linkedConnection.connectionObject.transform.position;
+                    else n2 = input.connectionObject.transform.position;
+                    n2.z = 0.0f;
+                    lR.SetPosition(0, n2);
+                    lR.SetPosition(1, n1);
+                }
+                else
+                {
+                    lR.enabled = false;
+                }
             }
             else if(input.linker == NodeManager.Singleton.linkingConnection)
             {
@@ -150,18 +168,7 @@ public class NodeObject : MonoBehaviour
             LineRenderer lR = output.connectionObject.GetComponent<LineRenderer>();
             if(output.linkedConnection != null)
             {
-                //  Draw Lines
-                lR.enabled = true;
-                lR.startColor = Global.ConnectionColor(output.dataType);
-                lR.endColor = Global.ConnectionColor(output.linkedConnection.dataType);
-                Vector3 n1 = output.connectionObject.transform.position;
-                n1.z = 0.0f;
-                lR.SetPosition(0, n1);
-                Vector3 n2 = output.connectionObject.transform.position;
-                if (output.linkedConnection != null) n2 = output.linkedConnection.connectionObject.transform.position;
-                else n2 = output.connectionObject.transform.position;
-                n2.z = 0.0f;
-                lR.SetPosition(1, n2);
+                lR.enabled = false;
             }
             else if(output.linker == NodeManager.Singleton.linkingConnection)
             {
