@@ -6,6 +6,7 @@ using UnityEngine;
 public abstract class Node
 {
     public string nodeName;
+    public int nodeId;
     public List<NodeConnection> inConnections;
     public List<NodeConnection> outConnections;
     public NodeObject nodeObject;

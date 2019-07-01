@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 public class NodeObject : MonoBehaviour
 {
-    private int m_nodeUniqueId;
-    public int GetUniqueId(){return m_nodeUniqueId;}
+    public int GetUniqueId(){return m_node.nodeId;}
+    public void SetUniqueId(int newId) { m_node.nodeId = newId; }
     private Node m_node;
-    public Node GetNode(){return m_node;}
+    public Node GetNode(){ return m_node; }
     private bool m_initialized;
     public List<GameObject> inObjects;
     public List<GameObject> outObjects;
@@ -24,17 +24,28 @@ public class NodeObject : MonoBehaviour
     public GameObject boolUiPrefab;
     public Image shadow;
 
-    public void Init(Node _nodeType)
+    public void Init(Node _nodeType, int _id)
     {
-        m_nodeUniqueId = Global.STATIC_NODE_ID;
-        Global.STATIC_NODE_ID++;
         m_node = _nodeType;
         m_node.SetObject(this);
         m_node.Setup();
+        if (_id == -1)
+        {
+            SetUniqueId(Global.STATIC_NODE_ID);
+            Global.STATIC_NODE_ID++;
+        }
+        else
+        {
+            SetUniqueId(_id);
+        }
         gameObject.name = "NODE_" + _nodeType.nodeName;
         nameText.text = _nodeType.nodeName;
         Refresh();
         m_initialized = true;
+    }
+    public void Init(Node _nodeType)
+    {
+        Init(_nodeType, -1);
     }
     public void Init(Node _nodeType, NodeConnection _nodeConnection)
     {
@@ -171,6 +182,7 @@ public class NodeObject : MonoBehaviour
     public void DeleteNode()
     {
         NodeManager.Singleton.nodeObjects.Remove(this);
+        if (NodeManager.Singleton.autoGenToggle.isOn) NodeManager.Singleton.SaveNodeGraph();
         GameObject.Destroy(gameObject);
     }
 

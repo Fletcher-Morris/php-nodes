@@ -12,6 +12,8 @@ public class NodeManager : MonoBehaviour
     public ScrollRect scrollView;
     public Transform buttonArea;
     public GameObject nodePrefab;
+    public Toggle autoGenToggle;
+    public Text generatedNodeGraph;
 
 
     public List<NodeObject> nodeObjects;
@@ -23,6 +25,11 @@ public class NodeManager : MonoBehaviour
     private int currentZoomLevel = 1;
 
     public float minConnectorDist = 10.0f;
+
+    public Vector2 mousePos;
+    public float safeAreaMin;
+    public float safeAreaMax;
+    public bool inSafeZone;
 
     void Start()
     {
@@ -98,6 +105,7 @@ public class NodeManager : MonoBehaviour
                 Debug.Log("Can only link an output to an input!");
             }
         }
+        if (autoGenToggle.isOn) SaveNodeGraph();
     }
 
     public void CreateNode(string _nodeClassName)
@@ -114,6 +122,7 @@ public class NodeManager : MonoBehaviour
         newNode.GetComponent<NodeObject>().Init((Node)System.Activator.CreateInstance(t));
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
         movingNode = newNode.GetComponent<NodeObject>();
+        if (autoGenToggle.isOn) SaveNodeGraph();
     }
     public void CreateNode(Button _button)
     {
@@ -126,6 +135,7 @@ public class NodeManager : MonoBehaviour
         {
             node.transform.localPosition = Align(node.transform.localPosition);
         }
+        if (autoGenToggle.isOn) SaveNodeGraph();
     }
     public Vector3 Align(Vector3 pos)
     {
@@ -157,8 +167,48 @@ public class NodeManager : MonoBehaviour
         yield return null;
     }
 
+    NodeObject FindNodeObjectById(int _id)
+    {
+        foreach(NodeObject obj in nodeObjects)
+        {
+            if (obj.GetUniqueId() == _id) return obj;
+        }
+        return null;
+    }
+    Node FindNodeById(int _id)
+    {
+        NodeObject obj = FindNodeObjectById(_id);
+        if (obj != null) return obj.GetNode();
+        return null;
+    }
+    NodeConnection FindConnectionById(int _id)
+    {
+        foreach (NodeObject obj in nodeObjects)
+        {
+            foreach(NodeConnection con in obj.GetNode().inConnections)
+            {
+                if (con.id == _id) return con;
+            }
+            foreach (NodeConnection con in obj.GetNode().outConnections)
+            {
+                if (con.id == _id) return con;
+            }
+        }
+        return null;
+    }
+    Linker FindLinkerById(int _id)
+    {
+        NodeConnection con = FindConnectionById(_id);
+        if (con != null) return con.linker;
+        return null;
+    }
+
     void Update()
     {
+        inSafeZone = true;
+        mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (mousePos.x < safeAreaMin) inSafeZone = false;
+        if (mousePos.x > safeAreaMax) inSafeZone = false;
         if (movingNode != null) MoveNode();
         else DragConnection();
         scrollView.horizontal = !draggingConnection;
@@ -178,6 +228,7 @@ public class NodeManager : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             movingNode = null;
+            if (autoGenToggle.isOn) SaveNodeGraph();
         }
     }
 
@@ -214,6 +265,7 @@ public class NodeManager : MonoBehaviour
                 linkingConnection = null;
                 draggingConnection = false;
             }
+            if (autoGenToggle.isOn) SaveNodeGraph();
         }
         else if(Input.GetMouseButtonUp(0))
         {
@@ -235,12 +287,6 @@ public class NodeManager : MonoBehaviour
             draggingConnection = false;
             linkingConnection = null;
         }
-    }
-
-    void OnDrawGizmos()
-    {
-        if(linkingConnection == null) return;
-        Gizmos.DrawIcon(linkingConnection.gameObject.transform.position, "Light Gizmo.tiff", true);
     }
 
     public void ZoomOut()
@@ -271,5 +317,79 @@ public class NodeManager : MonoBehaviour
         }
 
         yield return null;
+    }
+
+    public void SaveNodeGraph()
+    {
+        Global.STATIC_NODE_ID = 0;
+        string str = "PHP NODE GRAPH VERSION 0.1";
+        foreach(NodeObject obj in nodeObjects)
+        {
+            str += "\nSTART-NODE\n";
+            Node node = obj.GetNode();
+            node.nodeId = Global.STATIC_NODE_ID;
+            Global.STATIC_NODE_ID++;
+            str += node.nodeName;
+            str += ",";
+            str += obj.GetUniqueId();
+            str += ",";
+            str += obj.transform.localPosition.x;
+            str += ",";
+            str += obj.transform.localPosition.y;
+            str += "\ninputs\n";
+            foreach(NodeConnection con in node.inConnections)
+            {
+                if (con.linkedConnection != null)
+                {
+                    str += con.linkedConnection.id;
+                }
+                else
+                {
+                    str += "-1";
+                }
+                str += ",";
+            }
+            str += "\noutputs\n";
+            foreach (NodeConnection con in node.outConnections)
+            {
+                if (con.linkedConnection != null)
+                {
+                    str += con.linkedConnection.id;
+                }
+                else
+                {
+                    str += "-1";
+                }
+                str += ",";
+            }
+            str += "END-NODE";
+        }
+        generatedNodeGraph.text = str;
+        Global.CopyToClipboard(str);
+        Debug.Log("Saved Node Graph");
+    }
+
+    public void CreateGraphFromString(string str)
+    {
+        string[] lines = str.Split('\n');
+
+        string newNodeName;
+        string newNodeType;
+        int newNodeId;
+        float newNodeXPos;
+        float newNodeYPos;
+
+
+        foreach(string line in lines)
+        {
+            if(line == "START-NODE")
+            {
+
+            }
+            else if(line == "END-NODE")
+            {
+
+            }
+        }
     }
 }

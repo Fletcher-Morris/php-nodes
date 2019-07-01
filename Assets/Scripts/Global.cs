@@ -31,4 +31,18 @@ public static class Global
         float result = (newMin + (value - min) * (newMax - newMin) / (max - min));
         return result;
     }
+
+    public static void CopyToClipboard(string copy)
+    {
+        TextEditor te = new TextEditor();
+        te.text = copy;
+        te.SelectAll();
+        te.Copy();
+    }
+    public static string PasteFromClipboard()
+    {
+        TextEditor te = new TextEditor();
+        te.Paste();
+        return te.text;
+    }
 }
