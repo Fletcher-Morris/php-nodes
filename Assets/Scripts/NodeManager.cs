@@ -384,17 +384,17 @@ public class NodeManager : MonoBehaviour
     {
         ClearGraph();
         string[] lines = str.Split('\n');
-
+        bool makingNode = false;
 
         foreach(string line in lines)
         {
             if(line == "START-NODE")
             {
-
+                makingNode = true;
             }
             else if(line == "END-NODE")
             {
-
+                makingNode = false;
             }
         }
     }
