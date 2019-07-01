@@ -21,8 +21,12 @@ public class NodeObject : MonoBehaviour
     public Vector3 lineOffset;
     public Transform inputTransform;
     public Transform outputTransform;
-    public GameObject boolUiPrefab;
     public Image shadow;
+    [Header("UI Prefabs")]
+    public GameObject boolUiPrefab;
+    public GameObject intUiPrefab;
+    public GameObject floatUiPrefab;
+    public GameObject stringUiPrefab;
 
     public void Init(Node _nodeType, int _id)
     {

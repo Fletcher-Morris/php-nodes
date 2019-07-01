@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Node_Float : Node
 {
+    InputField field;
+
     public override void Setup()
     {
         nodeName = "FLOAT";
-        width = 150;
+        nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+        GameObject obj = GameObject.Instantiate(nodeObject.floatUiPrefab, nodeObject.transform);
+        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
             inConnections= new List<NodeConnection>();

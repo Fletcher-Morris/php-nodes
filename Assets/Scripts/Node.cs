@@ -10,7 +10,8 @@ public abstract class Node
     public List<NodeConnection> inConnections;
     public List<NodeConnection> outConnections;
     public NodeObject nodeObject;
-    public int width;
+    public int width = 150;
+    public int height = 150;
 
     public abstract void Setup();
     public void SetObject(NodeObject _obj)

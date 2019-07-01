@@ -139,7 +139,7 @@ public class NodeManager : MonoBehaviour
     }
     public Vector3 Align(Vector3 pos)
     {
-        float grid = 150f / 2.0f;
+        float grid = 50f;
         float scale = 1.0f / grid;
         pos.x *= scale;
         pos.y *= scale;
@@ -319,6 +319,17 @@ public class NodeManager : MonoBehaviour
         yield return null;
     }
 
+    public void ClearGraph()
+    {
+        foreach (NodeObject obj in nodeObjects)
+        {
+            GameObject.Destroy(obj.gameObject);
+        }
+        nodeObjects = new List<NodeObject>();
+        Global.STATIC_NODE_ID = 0;
+        if (autoGenToggle.isOn) SaveNodeGraph();
+    }
+
     public void SaveNodeGraph()
     {
         Global.STATIC_NODE_ID = 0;
@@ -371,13 +382,8 @@ public class NodeManager : MonoBehaviour
 
     public void CreateGraphFromString(string str)
     {
+        ClearGraph();
         string[] lines = str.Split('\n');
-
-        string newNodeName;
-        string newNodeType;
-        int newNodeId;
-        float newNodeXPos;
-        float newNodeYPos;
 
 
         foreach(string line in lines)

@@ -1,13 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Node_String : Node
 {
+    InputField field;
+
     public override void Setup()
     {
         nodeName = "STRING";
-        width = 150;
+        width = 200;
+        nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.transform);
+        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
             inConnections= new List<NodeConnection>();

@@ -32,10 +32,10 @@ RectTransform:
   m_Father: {fileID: 7519623269376695252}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 175, y: 175}
+  m_SizeDelta: {x: 25, y: 25}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1134170273
 CanvasRenderer:
@@ -107,9 +107,9 @@ RectTransform:
   m_Father: {fileID: 3640957782577857915}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 60, y: 0}
+  m_AnchorMin: {x: 1, y: 0.5}
+  m_AnchorMax: {x: 1, y: 0.5}
+  m_AnchoredPosition: {x: -15, y: 0}
   m_SizeDelta: {x: 17.5, y: 17.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2006639816
@@ -238,9 +238,9 @@ RectTransform:
   m_Father: {fileID: 3640957782577857915}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -60, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: 15, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2575429727996539489
@@ -572,11 +572,11 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -75, y: 75}
   m_SizeDelta: {x: 150, y: 150}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_Pivot: {x: 0, y: 1}
 --- !u!222 &7519623269376695081
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -636,9 +636,15 @@ MonoBehaviour:
   lineOffset: {x: 0, y: 0, z: 0}
   inputTransform: {fileID: 1812289595409261686}
   outputTransform: {fileID: 8926053018518847056}
+  shadow: {fileID: 1134170272}
   boolUiPrefab: {fileID: 4091665886579943985, guid: 94f18bcb4a6d9094f94ce2f61de17d08,
     type: 3}
-  shadow: {fileID: 1134170272}
+  intUiPrefab: {fileID: 7245880135325862016, guid: a42c8bad58d4ea743a5736db5177645f,
+    type: 3}
+  floatUiPrefab: {fileID: 212896974855869967, guid: bf32f8ae6536f0447a0e154dae24259b,
+    type: 3}
+  stringUiPrefab: {fileID: 7129763964805181785, guid: 2abae0941a4f55844b4510a675583675,
+    type: 3}
 --- !u!1 &8985573556348040704
 GameObject:
   m_ObjectHideFlags: 0

@@ -6,10 +6,10 @@ public class Node_Add : Node
     public override void Setup()
     {
         nodeName = "ADD";
-        width = 150;
+        nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {
-            inConnections= new List<NodeConnection>();
+            inConnections = new List<NodeConnection>();
             inConnections.Add(new NodeConnection(this, "A", false, DataType.IntType));
             inConnections.Add(new NodeConnection(this, "B", false, DataType.IntType));
         }

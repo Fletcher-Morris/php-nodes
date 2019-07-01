@@ -7,7 +7,7 @@ public class Node_Connect : Node
     public override void Setup()
     {
         nodeName = "CONNECT";
-        width = 150;
+        nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {
             inConnections = new List<NodeConnection>();
