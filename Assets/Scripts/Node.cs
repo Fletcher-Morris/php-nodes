@@ -7,6 +7,8 @@ public abstract class Node
 {
     public string nodeName;
     public int nodeId;
+    public string tag;
+    public bool isFunction = false;
     public List<NodeConnection> inConnections;
     public List<NodeConnection> outConnections;
     public NodeObject nodeObject;

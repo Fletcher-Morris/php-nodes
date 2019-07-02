@@ -31,9 +31,23 @@ public class NodeManager : MonoBehaviour
     public float safeAreaMax;
     public bool inSafeZone;
 
+    [Header("Color Scheme")]
+    public Color stringLinkColor;
+    public Color intLinkColor;
+    public Color floatLinkColor;
+    public Color boolLinkColor;
+    public Color classLinkColor;
+    public Color flowLinkColor;
+    public Color sqlNodeColor;
+    public Color phpNodeColor;
+    public Color variableNodeColor;
+    public Color mathNodeColor;
+    public Color stringNodeColor;
+
     void Start()
     {
         Singleton = this;
+        UpdateGlobalColors();
         foreach(Text txt in buttonArea.GetComponentsInChildren<Text>())
         {
             txt.text = txt.transform.name;
@@ -46,6 +60,27 @@ public class NodeManager : MonoBehaviour
             {
                 btn.interactable = false;
             }
+        }
+        buttonArea.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonArea.GetComponent<RectTransform>().sizeDelta.x, 50 * buttonArea.childCount);
+    }
+
+    public void UpdateGlobalColors()
+    {
+        Global.stringLinkColor = stringLinkColor;
+        Global.intLinkColor = intLinkColor;
+        Global.floatLinkColor = floatLinkColor;
+        Global.boolLinkColor = boolLinkColor;
+        Global.classLinkColor = classLinkColor;
+        Global.flowLinkColor = flowLinkColor;
+        Global.sqlNodeColor = sqlNodeColor;
+        Global.phpNodeColor = phpNodeColor;
+        Global.variableNodeColor = variableNodeColor;
+        Global.mathNodeColor = mathNodeColor;
+        Global.stringNodeColor = stringNodeColor;
+
+        foreach (NodeObject obj in nodeObjects)
+        {
+            obj.UpdateColors();
         }
     }
 
@@ -88,16 +123,14 @@ public class NodeManager : MonoBehaviour
             }
             else if(linkingConnection.connection.isOutput != _b.connection.isOutput)
             {
-                if(_a.connection.linkedConnection != null)
-                {
-                    _a.connection.linkedConnection.linkedConnection = null;
-                }
-                if(_b.connection.linkedConnection != null)
-                {
-                    _b.connection.linkedConnection.linkedConnection = null;
-                }
-                _a.connection.linkedConnection = _b.connection;
-                _b.connection.linkedConnection = _a.connection;
+                Linker _input;
+                Linker _output;
+                if (_a.connection.isOutput) { _input = _b; _output = _a; }
+                else { _input = _a; _output = _b; }
+
+                _output.connection.linkedConnection = null;
+                _input.connection.linkedConnection = _output.connection;
+
                 Debug.Log("Linked Nodes " + _a.node.GetUniqueId() + " & " + _b.node.GetUniqueId());
             }
             else
@@ -123,6 +156,7 @@ public class NodeManager : MonoBehaviour
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
         movingNode = newNode.GetComponent<NodeObject>();
         if (autoGenToggle.isOn) SaveNodeGraph();
+        UpdateGlobalColors();
     }
     public void CreateNode(Button _button)
     {
@@ -187,11 +221,11 @@ public class NodeManager : MonoBehaviour
         {
             foreach(NodeConnection con in obj.GetNode().inConnections)
             {
-                if (con.id == _id) return con;
+                if (con.GetConnectorId() == _id) return con;
             }
             foreach (NodeConnection con in obj.GetNode().outConnections)
             {
-                if (con.id == _id) return con;
+                if (con.GetConnectorId() == _id) return con;
             }
         }
         return null;
@@ -327,12 +361,14 @@ public class NodeManager : MonoBehaviour
         }
         nodeObjects = new List<NodeObject>();
         Global.STATIC_NODE_ID = 0;
+        Global.STATIC_CONNECTOR_ID = 0;
         if (autoGenToggle.isOn) SaveNodeGraph();
     }
 
     public void SaveNodeGraph()
     {
         Global.STATIC_NODE_ID = 0;
+        Global.STATIC_CONNECTOR_ID = 0;
         string str = "PHP NODE GRAPH VERSION 0.1";
         foreach(NodeObject obj in nodeObjects)
         {
@@ -350,9 +386,11 @@ public class NodeManager : MonoBehaviour
             str += "\ninputs\n";
             foreach(NodeConnection con in node.inConnections)
             {
+                con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
+                Global.STATIC_CONNECTOR_ID++;
                 if (con.linkedConnection != null)
                 {
-                    str += con.linkedConnection.id;
+                    str += con.linkedConnection.GetConnectorId();
                 }
                 else
                 {
@@ -363,9 +401,11 @@ public class NodeManager : MonoBehaviour
             str += "\noutputs\n";
             foreach (NodeConnection con in node.outConnections)
             {
+                con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
+                Global.STATIC_CONNECTOR_ID++;
                 if (con.linkedConnection != null)
                 {
-                    str += con.linkedConnection.id;
+                    str += con.linkedConnection.GetConnectorId();
                 }
                 else
                 {

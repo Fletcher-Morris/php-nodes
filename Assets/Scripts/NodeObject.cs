@@ -14,6 +14,7 @@ public class NodeObject : MonoBehaviour
     public List<GameObject> inObjects;
     public List<GameObject> outObjects;
     [SerializeField] private GameObject connectionSprite;
+    public Image header;
     public Text nameText;
     public Button moveButton;
     public Button deleteButton;
@@ -63,6 +64,19 @@ public class NodeObject : MonoBehaviour
                 break;
             }
         }
+    }
+
+    public void UpdateColors()
+    {
+        Color headerCol;
+        if (m_node.tag == "variable") { headerCol = Global.variableNodeColor; }
+        else if (m_node.tag == "sql") { headerCol = Global.sqlNodeColor; }
+        else if (m_node.tag == "maths") { headerCol = Global.mathNodeColor; }
+        else if (m_node.tag == "php") { headerCol = Global.phpNodeColor; }
+        else if (m_node.tag == "string") { headerCol = Global.stringNodeColor; }
+        else { headerCol = Color.white; }
+        header.color = headerCol;
+        foreach(Linker l in )
     }
 
     void Refresh()

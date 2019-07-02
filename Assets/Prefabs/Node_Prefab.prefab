@@ -630,6 +630,7 @@ MonoBehaviour:
   outObjects: []
   connectionSprite: {fileID: 4401288628405398579, guid: 131961fcad9ced047b4b9a705f9f25de,
     type: 3}
+  header: {fileID: 6305661652211869387}
   nameText: {fileID: 1132662956491229145}
   moveButton: {fileID: 5680409932152146173}
   deleteButton: {fileID: 2006639814}

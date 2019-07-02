@@ -1,11 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class Node_Add : Node
+
+public class Node_Subtract : Node
 {
     public override void Setup()
     {
-        nodeName = "ADD";
+        nodeName = "SUBTRACT";
+        tag = "maths";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {

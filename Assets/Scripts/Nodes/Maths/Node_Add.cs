@@ -1,28 +1,23 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-
-public class Node_String : Node
+public class Node_Add : Node
 {
-    InputField field;
-
     public override void Setup()
     {
-        nodeName = "STRING";
-        tag = "variable";
-        width = 200;
+        nodeName = "ADD";
+        tag = "maths";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.transform);
-        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
-            inConnections= new List<NodeConnection>();
+            inConnections = new List<NodeConnection>();
+            inConnections.Add(new NodeConnection(this, "A", false, DataType.IntType));
+            inConnections.Add(new NodeConnection(this, "B", false, DataType.IntType));
         }
         //  Set up outputs
         {
             outConnections= new List<NodeConnection>();
-            outConnections.Add(new NodeConnection(this, "Out", true, DataType.StringType));
+            outConnections.Add(new NodeConnection(this, "Out", true, DataType.IntType));
         }
     }
 

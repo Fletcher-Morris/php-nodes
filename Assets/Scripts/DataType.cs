@@ -10,5 +10,5 @@ public enum DataType
     FloatType,
     BoolType,
     ClassType,
-    ConType
+    FlowType
 }

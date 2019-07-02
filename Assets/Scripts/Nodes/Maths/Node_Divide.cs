@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node_Subtract : Node
+public class Node_Divide : Node
 {
     public override void Setup()
     {
-        nodeName = "SUBTRACT";
+        nodeName = "DIVIDE";
+        tag = "maths";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {

@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node_Divide : Node
+public class Node_Multiply : Node
 {
     public override void Setup()
     {
-        nodeName = "DIVIDE";
+        nodeName = "MULTIPLY";
+        tag = "maths";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {

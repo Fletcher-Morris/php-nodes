@@ -7,6 +7,7 @@ public class Node_Connect : Node
     public override void Setup()
     {
         nodeName = "CONNECT";
+        tag = "sql";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {

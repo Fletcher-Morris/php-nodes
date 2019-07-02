@@ -10,6 +10,7 @@ public class Node_Int : Node
     public override void Setup()
     {
         nodeName = "INT";
+        tag = "variable";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         GameObject obj = GameObject.Instantiate(nodeObject.intUiPrefab, nodeObject.transform);
         field = obj.GetComponent<InputField>();

@@ -5,23 +5,36 @@ using UnityEngine;
 public static class Global
 {
     public static int STATIC_NODE_ID;
+    public static int STATIC_CONNECTOR_ID;
+
+    public static Color stringLinkColor;
+    public static Color intLinkColor;
+    public static Color floatLinkColor;
+    public static Color boolLinkColor;
+    public static Color classLinkColor;
+    public static Color flowLinkColor;
+    public static Color sqlNodeColor;
+    public static Color phpNodeColor;
+    public static Color variableNodeColor;
+    public static Color mathNodeColor;
+    public static Color stringNodeColor;
 
     public static Color ConnectionColor(DataType _type)
     {
         switch (_type)
         {
             case DataType.StringType:
-                return Color.white;
+                return stringLinkColor;
             case DataType.IntType:
-                return Color.blue;
+                return intLinkColor;
             case DataType.BoolType:
-                return Color.green;
+                return boolLinkColor;
             case DataType.FloatType:
-                return Color.cyan;
+                return floatLinkColor;
             case DataType.ClassType:
-                return Color.red;
-            case DataType.ConType:
-                return Color.yellow;
+                return classLinkColor;
+            case DataType.FlowType:
+                return flowLinkColor;
         }
         return Color.gray;
     }

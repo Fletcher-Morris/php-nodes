@@ -12,7 +12,12 @@ public class Linker : MonoBehaviour
 
     void Start()
     {
-        sprite.color = Global.ConnectionColor(connection.dataType);
+        UpdateColors();
         connection.linker = this;
+    }
+
+    public void UpdateColors()
+    {
+        sprite.color = Global.ConnectionColor(connection.dataType);
     }
 }

@@ -5,7 +5,6 @@ using UnityEngine;
 [System.Serializable]
 public class NodeConnection
 {
-    public static int STATIC_CONNECTOR_ID;
     public string connectionName;
     public Node connectionNode;
     public bool isOutput;
@@ -13,12 +12,15 @@ public class NodeConnection
     public DataType dataType;
     public GameObject connectionObject;
     public Linker linker;
-    public int id;
+    private int m_uniqueId;
+
+    public int GetConnectorId() { return m_uniqueId; }
+    public void SetConnectorId(int _id) { m_uniqueId = _id; }
 
     public NodeConnection(Node _node, string _name, bool _output, DataType _type)
     {
-        id = STATIC_CONNECTOR_ID;
-        STATIC_CONNECTOR_ID++;
+        m_uniqueId = Global.STATIC_CONNECTOR_ID;
+        Global.STATIC_CONNECTOR_ID++;
         connectionNode = _node;
         connectionName = _name;
         isOutput = _output;
