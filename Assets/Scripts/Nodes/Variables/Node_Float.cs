@@ -10,7 +10,7 @@ public class Node_Float : Node
     public override void Setup()
     {
         nodeName = "FLOAT";
-        tag = "variable";
+        tag = "float";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         GameObject obj = GameObject.Instantiate(nodeObject.floatUiPrefab, nodeObject.transform);
         field = obj.GetComponent<InputField>();

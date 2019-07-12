@@ -18,6 +18,6 @@ public class Linker : MonoBehaviour
 
     public void UpdateColors()
     {
-        sprite.color = Global.ConnectionColor(connection.dataType);
+        sprite.color = NodeManager.Singleton.GetTagColor(connection.dataType);
     }
 }

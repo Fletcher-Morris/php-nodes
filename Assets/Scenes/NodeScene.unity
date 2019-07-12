@@ -1038,7 +1038,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 141.99998}
+  m_AnchoredPosition: {x: 0, y: 142.00058}
   m_SizeDelta: {x: 0, y: 600}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &363990089
@@ -1404,6 +1404,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   contentArea: {fileID: 2084195427}
+  helpText: {fileID: 851134601}
   scrollView: {fileID: 174259261}
   buttonArea: {fileID: 363990088}
   nodePrefab: {fileID: 7519623269376695253, guid: af599a4f015d7e747b29b4a16053d8ae,
@@ -1419,17 +1420,21 @@ MonoBehaviour:
   safeAreaMin: 0
   safeAreaMax: 0
   inSafeZone: 0
-  stringLinkColor: {r: 1, g: 1, b: 1, a: 1}
-  intLinkColor: {r: 0, g: 0.6242826, b: 1, a: 1}
-  floatLinkColor: {r: 0, g: 1, b: 0.60730743, a: 1}
-  boolLinkColor: {r: 0.5030221, g: 1, b: 0, a: 1}
-  classLinkColor: {r: 1, g: 0, b: 0.23522091, a: 1}
-  flowLinkColor: {r: 0.66, g: 0, b: 1, a: 1}
-  sqlNodeColor: {r: 1, g: 0.45531476, b: 0, a: 1}
-  phpNodeColor: {r: 1, g: 0, b: 0.23529413, a: 1}
-  variableNodeColor: {r: 1, g: 1, b: 1, a: 1}
-  mathNodeColor: {r: 0, g: 0.62352943, b: 1, a: 1}
-  stringNodeColor: {r: 0.5019608, g: 1, b: 0, a: 1}
+  colorTags:
+  - tag: bool
+    color: {r: 1, g: 0.8571428, b: 0, a: 1}
+  - tag: float
+    color: {r: 0, g: 1, b: 0.57142854, a: 1}
+  - tag: int
+    color: {r: 0, g: 0.5714288, b: 1, a: 1}
+  - tag: string
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - tag: sql
+    color: {r: 1, g: 0.69758064, b: 0, a: 1}
+  - tag: php
+    color: {r: 0.7120419, g: 0.7643979, b: 1, a: 1}
+  - tag: maths
+    color: {r: 0, g: 0.5600412, b: 1, a: 1}
 --- !u!20 &519420031
 Camera:
   m_ObjectHideFlags: 0
@@ -1858,7 +1863,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1235962862}
   m_HandleRect: {fileID: 1235962861}
   m_Direction: 0
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -2187,6 +2192,85 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 843955749}
+  m_CullTransparentMesh: 0
+--- !u!1 &851134599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 851134600}
+  - component: {fileID: 851134602}
+  - component: {fileID: 851134601}
+  m_Layer: 5
+  m_Name: HelpText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &851134600
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851134599}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1309473272}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 30}
+  m_Pivot: {x: 0.5, y: 1}
+--- !u!114 &851134601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851134599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, Unity.ugui,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 14
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 0
+    m_MaxSize: 40
+    m_Alignment: 4
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: HELP
+--- !u!222 &851134602
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851134599}
   m_CullTransparentMesh: 0
 --- !u!1 &879770794
 GameObject:
@@ -3279,8 +3363,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 879770796}
   m_HandleRect: {fileID: 879770795}
   m_Direction: 2
-  m_Value: 0.00000021491252
-  m_Size: 0.7633333
+  m_Value: -0.000003868425
+  m_Size: 0.75364894
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -4187,6 +4271,7 @@ RectTransform:
   - {fileID: 422664208}
   - {fileID: 1036969357}
   - {fileID: 174259260}
+  - {fileID: 851134600}
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

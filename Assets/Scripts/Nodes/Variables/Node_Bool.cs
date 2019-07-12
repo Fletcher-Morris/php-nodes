@@ -10,7 +10,7 @@ public class Node_Bool : Node
     public override void Setup()
     {
         nodeName = "BOOL";
-        tag = "variable";
+        tag = "bool";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.transform);
         toggle = obj.GetComponent<Toggle>();

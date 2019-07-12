@@ -10,7 +10,7 @@ public class Node_String : Node
     public override void Setup()
     {
         nodeName = "STRING";
-        tag = "variable";
+        tag = "string";
         width = 200;
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.transform);

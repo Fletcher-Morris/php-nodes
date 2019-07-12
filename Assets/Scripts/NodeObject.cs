@@ -68,15 +68,13 @@ public class NodeObject : MonoBehaviour
 
     public void UpdateColors()
     {
-        Color headerCol;
-        if (m_node.tag == "variable") { headerCol = Global.variableNodeColor; }
-        else if (m_node.tag == "sql") { headerCol = Global.sqlNodeColor; }
-        else if (m_node.tag == "maths") { headerCol = Global.mathNodeColor; }
-        else if (m_node.tag == "php") { headerCol = Global.phpNodeColor; }
-        else if (m_node.tag == "string") { headerCol = Global.stringNodeColor; }
-        else { headerCol = Color.white; }
+        Color headerCol = NodeManager.Singleton.GetTagColor(m_node.tag);
         header.color = headerCol;
-        foreach(Linker l in )
+        foreach(GameObject obj in inObjects)
+        {
+            Linker linker = obj.GetComponent<Linker>();
+            linker.UpdateColors();
+        }
     }
 
     void Refresh()
@@ -144,8 +142,8 @@ public class NodeObject : MonoBehaviour
                 {
                     //  Draw Lines
                     lR.enabled = true;
-                    lR.startColor = Global.ConnectionColor(input.linkedConnection.dataType);
-                    lR.endColor = Global.ConnectionColor(input.dataType);
+                    lR.startColor = NodeManager.Singleton.GetTagColor(input.linkedConnection.dataType);
+                    lR.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
                     Vector3 n1 = input.connectionObject.transform.position;
                     n1.z = 0.0f;
                     Vector3 n2 = input.connectionObject.transform.position;
@@ -164,8 +162,8 @@ public class NodeObject : MonoBehaviour
             {
                 //  Draw Line
                 lR.enabled = true;
-                lR.startColor = Global.ConnectionColor(input.dataType);
-                lR.endColor = Global.ConnectionColor(input.dataType);
+                lR.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                lR.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
                 lR.SetPosition(0, input.connectionObject.transform.position + lineOffset);
                 Vector3 cP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 cP.z = 0.0f;
@@ -188,8 +186,8 @@ public class NodeObject : MonoBehaviour
             {
                 //  Draw Lines
                 lR.enabled = true;
-                lR.startColor = Global.ConnectionColor(output.dataType);
-                lR.endColor = Global.ConnectionColor(output.dataType);
+                lR.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
+                lR.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
                 Vector3 nP = output.connectionObject.transform.position;
                 nP.z = 0.0f;
                 lR.SetPosition(0, nP);

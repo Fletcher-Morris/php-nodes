@@ -9,6 +9,7 @@ public class NodeManager : MonoBehaviour
     public static NodeManager Singleton;
 
     public Transform contentArea;
+    public Text helpText;
     public ScrollRect scrollView;
     public Transform buttonArea;
     public GameObject nodePrefab;
@@ -32,17 +33,7 @@ public class NodeManager : MonoBehaviour
     public bool inSafeZone;
 
     [Header("Color Scheme")]
-    public Color stringLinkColor;
-    public Color intLinkColor;
-    public Color floatLinkColor;
-    public Color boolLinkColor;
-    public Color classLinkColor;
-    public Color flowLinkColor;
-    public Color sqlNodeColor;
-    public Color phpNodeColor;
-    public Color variableNodeColor;
-    public Color mathNodeColor;
-    public Color stringNodeColor;
+    public List<ColorTag> colorTags;
 
     void Start()
     {
@@ -66,22 +57,32 @@ public class NodeManager : MonoBehaviour
 
     public void UpdateGlobalColors()
     {
-        Global.stringLinkColor = stringLinkColor;
-        Global.intLinkColor = intLinkColor;
-        Global.floatLinkColor = floatLinkColor;
-        Global.boolLinkColor = boolLinkColor;
-        Global.classLinkColor = classLinkColor;
-        Global.flowLinkColor = flowLinkColor;
-        Global.sqlNodeColor = sqlNodeColor;
-        Global.phpNodeColor = phpNodeColor;
-        Global.variableNodeColor = variableNodeColor;
-        Global.mathNodeColor = mathNodeColor;
-        Global.stringNodeColor = stringNodeColor;
+        helpText.text = "";
+        foreach(ColorTag ct in colorTags)
+        {
+            if (colorTags.IndexOf(ct) != 0) helpText.text += "  ";
+            helpText.text += "<color=#" + ColorUtility.ToHtmlStringRGBA(ct.color) + ">";
+            helpText.text += ct.tag;
+            helpText.text += "</color>";
+        }
 
         foreach (NodeObject obj in nodeObjects)
         {
             obj.UpdateColors();
         }
+    }
+    public Color GetTagColor(string _tag)
+    {
+        foreach (ColorTag ct in colorTags)
+        {
+            if (ct.tag.ToLower() == _tag.ToLower()) { return ct.color; }
+            else if((ct.tag + "type").ToLower() == _tag.ToLower()) { return ct.color; }
+        }
+        return Color.grey;
+    }
+    public Color GetTagColor(DataType _type)
+    {
+        return GetTagColor(_type.ToString());
     }
 
     GameObject GetClosestLinker(Vector3 pos)
