@@ -370,10 +370,10 @@ public class NodeManager : MonoBehaviour
     {
         Global.STATIC_NODE_ID = 0;
         Global.STATIC_CONNECTOR_ID = 0;
-        string str = "PHP NODE GRAPH VERSION 0.1";
+        string str = "#PHP NODE GRAPH VERSION 0.1#";
         foreach(NodeObject obj in nodeObjects)
         {
-            str += "\nSTART-NODE\n";
+            str += "\n#START-NODE#\n";
             Node node = obj.GetNode();
             node.nodeId = Global.STATIC_NODE_ID;
             Global.STATIC_NODE_ID++;
@@ -384,7 +384,7 @@ public class NodeManager : MonoBehaviour
             str += obj.transform.localPosition.x;
             str += ",";
             str += obj.transform.localPosition.y;
-            str += "\ninputs\n";
+            str += "\n#INPUTS#\n";
             foreach(NodeConnection con in node.inConnections)
             {
                 con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
@@ -399,7 +399,7 @@ public class NodeManager : MonoBehaviour
                 }
                 str += ",";
             }
-            str += "\noutputs\n";
+            str += "\n#OUTPUTS#\n";
             foreach (NodeConnection con in node.outConnections)
             {
                 con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
@@ -414,28 +414,81 @@ public class NodeManager : MonoBehaviour
                 }
                 str += ",";
             }
-            str += "END-NODE";
+            str += "\n#DATA#\n";
+            str += node.Serialize();
+            str += "\n#END-NODE#";
         }
         generatedNodeGraph.text = str;
         Global.CopyToClipboard(str);
         Debug.Log("Saved Node Graph");
     }
 
+    public void CreateGraphFromClipBoard()
+    {
+        CreateGraphFromString(Global.PasteFromClipboard());
+    }
     public void CreateGraphFromString(string str)
     {
         ClearGraph();
         string[] lines = str.Split('\n');
         bool makingNode = false;
+        bool makingInputs = false;
+        bool makingOutputs = false;
+        bool makingData = false;
+
+        string nodeData = "";
 
         foreach(string line in lines)
         {
-            if(line == "START-NODE")
+            if(line == "#START-NODE#")
             {
                 makingNode = true;
+                makingInputs = false;
+                makingOutputs = false;
+                makingData = false;
             }
-            else if(line == "END-NODE")
+            else if(line == "#END-NODE#")
             {
                 makingNode = false;
+                makingInputs = false;
+                makingOutputs = false;
+                makingData = false;
+            }
+
+            if(makingNode)
+            {
+                if (line == "#INPUTS#")
+                {
+                    makingInputs = true;
+                    makingOutputs = false;
+                    makingData = false;
+                }
+                else if (line == "#OUTPUTS")
+                {
+                    makingInputs = false;
+                    makingOutputs = true;
+                    makingData = false;
+                }
+                else if (line == "#DATA#")
+                {
+                    makingInputs = false;
+                    makingOutputs = false;
+                    makingData = true;
+                    nodeData = "";
+                }
+
+                if(makingInputs)
+                {
+
+                }
+                else if(makingOutputs)
+                {
+
+                }
+                else if(makingData)
+                {
+                    nodeData += line;
+                }
             }
         }
     }

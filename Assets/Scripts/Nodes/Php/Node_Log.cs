@@ -27,8 +27,12 @@ public class Node_Log : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
+        return "";
+    }
 
+    public override void Deserialize(string _data)
+    {
     }
 }

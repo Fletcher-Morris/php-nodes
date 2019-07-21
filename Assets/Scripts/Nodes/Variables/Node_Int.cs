@@ -30,8 +30,13 @@ public class Node_Int : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
-        
+        return field.text.ToString();
+    }
+
+    public override void Deserialize(string _data)
+    {
+        field.text = int.Parse(_data).ToString();
     }
 }

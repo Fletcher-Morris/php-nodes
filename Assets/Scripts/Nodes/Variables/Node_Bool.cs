@@ -30,8 +30,13 @@ public class Node_Bool : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
-        bool value = toggle.isOn;
+        return toggle.isOn.ToString();
+    }
+
+    public override void Deserialize(string _data)
+    {
+        toggle.isOn = bool.Parse(_data);
     }
 }

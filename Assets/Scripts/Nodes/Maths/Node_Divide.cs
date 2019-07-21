@@ -27,8 +27,12 @@ public class Node_Divide : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
-        
-    } 
+        return "";
+    }
+
+    public override void Deserialize(string _data)
+    {
+    }
 }

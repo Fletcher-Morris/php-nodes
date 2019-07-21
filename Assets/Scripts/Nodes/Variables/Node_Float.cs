@@ -30,8 +30,13 @@ public class Node_Float : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
-        
-    } 
+        return field.text.ToString();
+    }
+
+    public override void Deserialize(string _data)
+    {
+        field.text = float.Parse(_data).ToString();
+    }
 }

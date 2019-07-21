@@ -21,5 +21,6 @@ public abstract class Node
         nodeObject = _obj;
     }
     public abstract bool Valid();
-    public abstract void Serialize();
+    public abstract string Serialize();
+    public abstract void Deserialize(string _data);
 }

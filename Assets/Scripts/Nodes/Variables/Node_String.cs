@@ -31,8 +31,13 @@ public class Node_String : Node
         return true;
     }
 
-    public override void Serialize()
+    public override string Serialize()
     {
-        
-    } 
+        return field.text.ToString();
+    }
+
+    public override void Deserialize(string _data)
+    {
+        field.text = _data.ToString();
+    }
 }
