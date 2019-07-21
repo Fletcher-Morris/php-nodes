@@ -14,7 +14,8 @@ public class NodeObject : MonoBehaviour
     public List<GameObject> inObjects;
     public List<GameObject> outObjects;
     [SerializeField] private GameObject connectionSprite;
-    public Image header;
+    public List<Image> headerSprites;
+    public List<Image> panelSprites;
     public Text nameText;
     public Button moveButton;
     public Button deleteButton;
@@ -22,7 +23,7 @@ public class NodeObject : MonoBehaviour
     public Vector3 lineOffset;
     public Transform inputTransform;
     public Transform outputTransform;
-    public Image shadow;
+    public GameObject shadow;
     [Header("UI Prefabs")]
     public GameObject boolUiPrefab;
     public GameObject intUiPrefab;
@@ -69,7 +70,10 @@ public class NodeObject : MonoBehaviour
     public void UpdateColors()
     {
         Color headerCol = NodeManager.Singleton.GetTagColor(m_node.tag);
-        header.color = headerCol;
+        foreach(Image img in headerSprites)
+        {
+            img.color = headerCol;
+        }
         foreach(GameObject obj in inObjects)
         {
             Linker linker = obj.GetComponent<Linker>();
@@ -131,7 +135,7 @@ public class NodeObject : MonoBehaviour
         foreach (Toggle tog in transform.GetComponentsInChildren<Toggle>()) { tog.interactable = NodeManager.Singleton.movingNode == null; }
         foreach (Dropdown drop in transform.GetComponentsInChildren<Dropdown>()) { drop.interactable = NodeManager.Singleton.movingNode == null; }
         foreach (Slider slid in transform.GetComponentsInChildren<Slider>()) { slid.interactable = NodeManager.Singleton.movingNode == null; }
-        shadow.enabled = NodeManager.Singleton.movingNode == this;
+        shadow.SetActive(NodeManager.Singleton.movingNode == this);
 
         foreach (NodeConnection input in m_node.inConnections)
         {
