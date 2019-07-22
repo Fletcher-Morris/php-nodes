@@ -1915,7 +1915,7 @@ LineRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 625666814}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -1997,7 +1997,7 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 0
+    numCapVertices: 3
     alignment: 1
     textureMode: 0
     shadowBias: 0.5
@@ -2011,7 +2011,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 625666814}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9f48ffdff6a68b444bd8e67170a75106, type: 3}
   m_Name: 
@@ -2019,7 +2019,7 @@ MonoBehaviour:
   line: {fileID: 625666816}
   m_path:
     pathPoints: []
-    pointCount: 300
+    pointCount: 30
   start: {x: 0, y: 0, z: 0}
   end: {x: 0, y: 0, z: 0}
   auto: 1

@@ -280,7 +280,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 10
+    widthMultiplier: 3.3333333
     widthCurve:
       serializedVersion: 2
       m_Curve:
@@ -326,7 +326,7 @@ LineRenderer:
       m_NumColorKeys: 2
       m_NumAlphaKeys: 2
     numCornerVertices: 0
-    numCapVertices: 0
+    numCapVertices: 3
     alignment: 1
     textureMode: 0
     shadowBias: 0.5
@@ -369,9 +369,7 @@ MonoBehaviour:
   line: {fileID: 6266250134008279893}
   m_path:
     pathPoints: []
-    pointCount: 300
-  a: {x: 0, y: 0, z: 0}
-  b: {x: 0, y: 0, z: 0}
-  c: {x: 0, y: 0, z: 0}
-  d: {x: 0, y: 0, z: 0}
+    pointCount: 30
+  start: {x: 0, y: 0, z: 0}
+  end: {x: 0, y: 0, z: 0}
   auto: 0

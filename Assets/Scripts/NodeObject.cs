@@ -150,11 +150,11 @@ public class NodeObject : MonoBehaviour
 
                     input.linker.bezier.start.x = input.connectionObject.transform.position.x;
                     input.linker.bezier.start.y = input.connectionObject.transform.position.y;
-                    input.linker.bezier.start.z = transform.position.z;
+                    input.linker.bezier.start.z = input.connectionObject.transform.position.z;
 
                     input.linker.bezier.end.x = input.linkedConnection.connectionObject.transform.position.x;
                     input.linker.bezier.end.y = input.linkedConnection.connectionObject.transform.position.y;
-                    input.linker.bezier.end.z = transform.position.z;
+                    input.linker.bezier.end.z = input.linkedConnection.connectionObject.transform.position.z;
 
                     input.linker.bezier.UpdatePath();
                 }
@@ -173,11 +173,11 @@ public class NodeObject : MonoBehaviour
 
                 input.linker.bezier.start.x = input.connectionObject.transform.position.x;
                 input.linker.bezier.start.y = input.connectionObject.transform.position.y;
-                input.linker.bezier.start.z = transform.position.z;
+                input.linker.bezier.start.z = input.connectionObject.transform.position.z;
 
                 input.linker.bezier.end.x = mousePos.x;
                 input.linker.bezier.end.y = mousePos.y;
-                input.linker.bezier.end.z = transform.position.z;
+                input.linker.bezier.end.z = input.connectionObject.transform.position.z;
 
                 input.linker.bezier.UpdatePath();
             }
@@ -199,11 +199,11 @@ public class NodeObject : MonoBehaviour
 
                 output.linker.bezier.start.x = output.connectionObject.transform.position.x;
                 output.linker.bezier.start.y = output.connectionObject.transform.position.y;
-                output.linker.bezier.start.z = transform.position.z;
+                output.linker.bezier.start.z = output.connectionObject.transform.position.z;
 
                 output.linker.bezier.end.x = mousePos.x;
                 output.linker.bezier.end.y = mousePos.y;
-                output.linker.bezier.end.z = transform.position.z;
+                output.linker.bezier.end.z = output.connectionObject.transform.position.z;
 
                 output.linker.bezier.UpdatePath();
             }

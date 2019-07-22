@@ -277,7 +277,7 @@ public class NodeManager : MonoBehaviour
     {
         Vector3 newPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         newPos.y += (movingNode.transform.position.y - movingNode.moveButton.transform.position.y);
-        newPos.z = 10.0f;
+        newPos.z = -5.5f;
         movingNode.transform.position = Vector3.Lerp(movingNode.transform.position, newPos, 20.0f * Time.deltaTime);
         if (Input.GetMouseButtonDown(0))
         {

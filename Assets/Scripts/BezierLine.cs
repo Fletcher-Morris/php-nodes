@@ -89,8 +89,10 @@ public class BezierLine : MonoBehaviour
         float xDiff = (start.x + end.x) / 2.0f;
         b.x = xDiff;
         b.y = start.y;
+        b.z = start.z;
         c.x = xDiff;
         c.y = end.y;
+        c.z = end.z;
         m_path.DeletePath();
         List<Vector3> cur = new List<Vector3>();
         cur.Add(start);
@@ -99,10 +101,11 @@ public class BezierLine : MonoBehaviour
         cur.Add(end);
         m_path.CreateCurve(cur);
 
-        line.positionCount = m_path.pointCount;
+        line.positionCount = m_path.pointCount + 1;
         for (int i = 0; i < (m_path.pointCount); i++)
         {
             line.SetPositions(m_path.pathPoints.ToArray());
         }
+        line.SetPosition(m_path.pointCount, end);
     }
 }
