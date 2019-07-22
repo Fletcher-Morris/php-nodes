@@ -164,16 +164,23 @@ public class NodeManager : MonoBehaviour
     {
         CreateNode("Node_" + _button.transform.name);
     }
-    public void CreateNode(int _nodeFlow, List<int> _nodeInputs, List<string> _nodeData)
+    public void CreateNode(Vector2 _nodePos, int _nodeFlow, List<int> _nodeInputs, List<string> _nodeData)
     {
         if(_nodeData.Count >= 1)
         {
             CreateNode(_nodeData[0]);
+            movingNode = null;
+            Node newNode = GetNewestNode();
+            newNode.nodeObject.transform.localPosition = new Vector3(_nodePos.x, _nodePos.y, 10.0f);
         }
         else
         {
             Debug.LogWarning("Not Enough Data To Create Node!");
         }
+    }
+    public Node GetNewestNode()
+    {
+        return nodeObjects[nodeObjects.Count - 1].GetNode();
     }
 
     public void AlignToGrid()
@@ -274,6 +281,7 @@ public class NodeManager : MonoBehaviour
         movingNode.transform.position = Vector3.Lerp(movingNode.transform.position, newPos, 20.0f * Time.deltaTime);
         if (Input.GetMouseButtonDown(0))
         {
+            movingNode.transform.localPosition = new Vector3(movingNode.transform.localPosition.x, movingNode.transform.localPosition.y, 10.0f);
             movingNode = null;
             if (autoGenToggle.isOn) SaveNodeGraph();
         }
@@ -375,7 +383,6 @@ public class NodeManager : MonoBehaviour
         nodeObjects = new List<NodeObject>();
         Global.STATIC_NODE_ID = 0;
         Global.STATIC_CONNECTOR_ID = 0;
-        if (autoGenToggle.isOn) SaveNodeGraph();
     }
 
     public void SaveNodeGraph()
@@ -389,10 +396,8 @@ public class NodeManager : MonoBehaviour
             Node node = obj.GetNode();
             node.nodeId = Global.STATIC_NODE_ID;
             Global.STATIC_NODE_ID++;
-            str += node.nodeName;
-            str += ",";
-            str += obj.GetUniqueId();
-            str += ",";
+            str += "#START-NODE#~";
+            str += "#POSITION#~";
             str += obj.transform.localPosition.x;
             str += ",";
             str += obj.transform.localPosition.y;
@@ -428,19 +433,17 @@ public class NodeManager : MonoBehaviour
     }
     public void CreateGraphFromString(string str)
     {
-        Debug.Log("Creating Graph From Clipboard:\n" + str);
-
         ClearGraph();
         string[] lines = str.Split('~');
-        Debug.Log(lines.Length);
-
 
         bool makingNode = false;
         bool makingFlow = false;
+        bool makingPos = false;
         bool makingInputs = false;
         bool makingData = false;
 
         int makingNodeFlow = -1;
+        Vector2 makingNodePos = new Vector2();
         List<int> makingNodeInputs = new List<int>();
         List<string> makingNodeData = new List<string>();
 
@@ -450,16 +453,17 @@ public class NodeManager : MonoBehaviour
             {
                 makingNode = true;
                 makingInputs = false;
+                makingPos = false;
                 makingData = false;
                 makingNodeData = new List<string>();
             }
             else if(line == "#END-NODE#")
             {
-                Debug.Log("NODE END");
                 makingNode = false;
                 makingInputs = false;
+                makingPos = false;
                 makingData = false;
-                CreateNode(makingNodeFlow, makingNodeInputs, makingNodeData);
+                CreateNode(makingNodePos, makingNodeFlow, makingNodeInputs, makingNodeData);
             }
             else if(makingNode)
             {
@@ -467,11 +471,39 @@ public class NodeManager : MonoBehaviour
                 {
                     makingInputs = true;
                     makingData = false;
+                    makingPos = false;
+                    makingInputs = false;
                 }
                 else if (line == "#DATA#")
                 {
                     makingInputs = false;
                     makingData = true;
+                    makingPos = false;
+                    makingInputs = false;
+                }
+                else if(line == "#POSITION#")
+                {
+                    makingInputs = false;
+                    makingData = false;
+                    makingPos = true;
+                    makingInputs = false;
+                }
+                else if(makingPos)
+                {
+                    float x, y;
+                    bool isFloat = float.TryParse(line.Split(',')[0], out x);
+                    if (!isFloat)
+                    {
+                        x = 0;
+                        Debug.LogWarning("'" + line + "' is not an Float");
+                    }
+                    isFloat = float.TryParse(line.Split(',')[1], out y);
+                    if (!isFloat)
+                    {
+                        y = 0;
+                        Debug.LogWarning("'" + line + "' is not an Float");
+                    }
+                    makingNodePos = new Vector2(x, y);
                 }
                 else if(makingInputs)
                 {
@@ -492,5 +524,6 @@ public class NodeManager : MonoBehaviour
                 }
             }
         }
+        
     }
 }
