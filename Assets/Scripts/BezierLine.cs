@@ -12,7 +12,7 @@ public class BezierPath
     public BezierPath()
     {
         pathPoints = new List<Vector3>();
-        pointCount = 100;
+        pointCount = 30;
     }
 
     public void DeletePath()
@@ -41,7 +41,7 @@ public class BezierPath
     {
         segments = controlPoints.Count / 3;
 
-        for (int s = 0; s < controlPoints.Count - 3; s += 3)
+        for (int s = 0; s < controlPoints.Count - 3; s+=3)
         {
             Vector3 p0 = controlPoints[s];
             Vector3 p1 = controlPoints[s + 1];
@@ -59,7 +59,6 @@ public class BezierPath
                 Vector3 point = new Vector3();
                 point = BezierPathCalculation(p0, p1, p2, p3, t);
                 pathPoints.Add(point);
-                Debug.Log("!");
             }
         }
     }
@@ -67,43 +66,43 @@ public class BezierPath
 
 public class BezierLine : MonoBehaviour
 {
-    LineRenderer lines;
-    public List<GameObject> objects;
-    public BezierPath path = new BezierPath();
-    
-    // Use this for initialization
-    void Start()
-    {
-        UpdatePath();
-    }
-    
-    // Update is called once per frame 
-    void Update()
-    {
-        UpdatePath();
-    }
+    public LineRenderer line;
+    private List<Vector3> m_handles;
+    public BezierPath m_path = new BezierPath();
+    public Vector3 start, end;
+    private Vector3 b, c;
 
-    private void UpdatePath()
+    public bool auto = false;
+    private void Update()
     {
-        if (lines == null) lines = GetComponent<LineRenderer>();
-
-        path.DeletePath();
-        List<Vector3> c = new List<Vector3>();
-        for (int o = 0; o < objects.Count; o++)
+        if (auto)
         {
-            if (objects[o] != null)
-            {
-                Vector3 p = objects[o].transform.position;
-                c.Add(p);
-                Debug.Log("Added Point '" + p.ToString() + "'");
-            }
+            start = transform.Find("start").position;
+            end = transform.Find("end").position;
+            UpdatePath();
         }
-        path.CreateCurve(c);
+    }
 
-        lines.positionCount = path.pointCount;
-        for (int i = 0; i < (path.pointCount); i++)
+    public void UpdatePath()
+    {
+        if (line == null) line = GetComponent<LineRenderer>();
+        float xDiff = (start.x + end.x) / 2.0f;
+        b.x = xDiff;
+        b.y = start.y;
+        c.x = xDiff;
+        c.y = end.y;
+        m_path.DeletePath();
+        List<Vector3> cur = new List<Vector3>();
+        cur.Add(start);
+        cur.Add(b);
+        cur.Add(c);
+        cur.Add(end);
+        m_path.CreateCurve(cur);
+
+        line.positionCount = m_path.pointCount;
+        for (int i = 0; i < (m_path.pointCount); i++)
         {
-            lines.SetPositions(path.pathPoints.ToArray());
+            line.SetPositions(m_path.pathPoints.ToArray());
         }
     }
 }

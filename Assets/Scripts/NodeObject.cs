@@ -139,69 +139,77 @@ public class NodeObject : MonoBehaviour
 
         foreach (NodeConnection input in m_node.inConnections)
         {
-            LineRenderer lR = input.connectionObject.GetComponent<LineRenderer>();
             if(input.linkedConnection != null)
             {
                 if(input.linkedConnection.connectionObject != null)
                 {
                     //  Draw Lines
-                    lR.enabled = true;
-                    lR.startColor = NodeManager.Singleton.GetTagColor(input.linkedConnection.dataType);
-                    lR.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
-                    Vector3 n1 = input.connectionObject.transform.position;
-                    n1.z = 0.0f;
-                    Vector3 n2 = input.connectionObject.transform.position;
-                    if (input.linkedConnection != null) n2 = input.linkedConnection.connectionObject.transform.position;
-                    else n2 = input.connectionObject.transform.position;
-                    n2.z = 0.0f;
-                    lR.SetPosition(0, n2);
-                    lR.SetPosition(1, n1);
+                    input.linker.bezier.line.enabled = true;
+                    input.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.linkedConnection.dataType);
+                    input.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
+
+                    input.linker.bezier.start.x = input.connectionObject.transform.position.x;
+                    input.linker.bezier.start.y = input.connectionObject.transform.position.y;
+                    input.linker.bezier.start.z = transform.position.z;
+
+                    input.linker.bezier.end.x = input.linkedConnection.connectionObject.transform.position.x;
+                    input.linker.bezier.end.y = input.linkedConnection.connectionObject.transform.position.y;
+                    input.linker.bezier.end.z = transform.position.z;
+
+                    input.linker.bezier.UpdatePath();
                 }
                 else
                 {
-                    lR.enabled = false;
+                    input.linker.bezier.line.enabled = false;
                 }
             }
-            else if(input.linker == NodeManager.Singleton.linkingConnection)
+            else if(input.linker == NodeManager.Singleton.linkingConnection && input.linker != null)
             {
                 //  Draw Line
-                lR.enabled = true;
-                lR.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
-                lR.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
-                lR.SetPosition(0, input.connectionObject.transform.position + lineOffset);
-                Vector3 cP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                cP.z = 0.0f;
-                lR.SetPosition(1, cP);
+                input.linker.bezier.line.enabled = true;
+                input.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                input.linker.bezier.start.x = input.connectionObject.transform.position.x;
+                input.linker.bezier.start.y = input.connectionObject.transform.position.y;
+                input.linker.bezier.start.z = transform.position.z;
+
+                input.linker.bezier.end.x = mousePos.x;
+                input.linker.bezier.end.y = mousePos.y;
+                input.linker.bezier.end.z = transform.position.z;
+
+                input.linker.bezier.UpdatePath();
             }
-            else
+            else if(input.linker != null)
             {
-                lR.enabled = false;
+                input.linker.bezier.line.enabled = false;
             }
         }
 
-        foreach(NodeConnection output in m_node.outConnections)
+        foreach (NodeConnection output in m_node.outConnections)
         {
-            LineRenderer lR = output.connectionObject.GetComponent<LineRenderer>();
-            if(output.linkedConnection != null)
-            {
-                lR.enabled = false;
-            }
-            else if(output.linker == NodeManager.Singleton.linkingConnection)
+            if (output.linker == NodeManager.Singleton.linkingConnection && output.linker != null)
             {
                 //  Draw Lines
-                lR.enabled = true;
-                lR.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
-                lR.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
-                Vector3 nP = output.connectionObject.transform.position;
-                nP.z = 0.0f;
-                lR.SetPosition(0, nP);
-                Vector3 cP = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                cP.z = 0.0f;
-                lR.SetPosition(1, cP);
+                output.linker.bezier.line.enabled = true;
+                output.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
+                output.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
+                Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+
+                output.linker.bezier.start.x = output.connectionObject.transform.position.x;
+                output.linker.bezier.start.y = output.connectionObject.transform.position.y;
+                output.linker.bezier.start.z = transform.position.z;
+
+                output.linker.bezier.end.x = mousePos.x;
+                output.linker.bezier.end.y = mousePos.y;
+                output.linker.bezier.end.z = transform.position.z;
+
+                output.linker.bezier.UpdatePath();
             }
-            else
+            else if (output.linker != null)
             {
-                lR.enabled = false;
+                output.linker.bezier.line.enabled = false;
             }
         }
     }
