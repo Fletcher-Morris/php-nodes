@@ -13,6 +13,11 @@ public class Linker : MonoBehaviour
 
     void Start()
     {
+        InitLinker();
+    }
+
+    public void InitLinker()
+    {
         UpdateColors();
         bezier = GetComponent<BezierLine>();
         connection.linker = this;

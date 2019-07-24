@@ -139,7 +139,17 @@ public class NodeManager : MonoBehaviour
                 Debug.Log("Can only link an output to an input!");
             }
         }
+        else
+        {
+            if (_a == null) Debug.Log("Linker a is null!");
+            if (_b == null) Debug.Log("Linker b is null!");
+        }
         if (autoGenToggle.isOn) SaveNodeGraph();
+    }
+    public void FormLink(int _a, int _b)
+    {
+        if (_a == -1 || _b == -1) return;
+        FormLink(FindLinkerById(_a), FindLinkerById(_b));
     }
 
     public void CreateNode(string _nodeClassName)
@@ -172,6 +182,7 @@ public class NodeManager : MonoBehaviour
             movingNode = null;
             Node newNode = GetNewestNode();
             newNode.nodeObject.transform.localPosition = new Vector3(_nodePos.x, _nodePos.y, 10.0f);
+            newNode.SetPreconnections(_nodeInputs);
         }
         else
         {
@@ -221,7 +232,7 @@ public class NodeManager : MonoBehaviour
         yield return null;
     }
 
-    NodeObject FindNodeObjectById(int _id)
+    public NodeObject FindNodeObjectById(int _id)
     {
         foreach(NodeObject obj in nodeObjects)
         {
@@ -229,31 +240,47 @@ public class NodeManager : MonoBehaviour
         }
         return null;
     }
-    Node FindNodeById(int _id)
+    public Node FindNodeById(int _id)
     {
         NodeObject obj = FindNodeObjectById(_id);
         if (obj != null) return obj.GetNode();
         return null;
     }
-    NodeConnection FindConnectionById(int _id)
+    public NodeConnection FindConnectionById(int _id)
     {
         foreach (NodeObject obj in nodeObjects)
         {
             foreach(NodeConnection con in obj.GetNode().inConnections)
             {
-                if (con.GetConnectorId() == _id) return con;
+                if (con.GetConnectorId() == _id)
+                {
+                    Debug.Log("Found connection with id '" + _id + "'");
+                    return con;
+                }
             }
             foreach (NodeConnection con in obj.GetNode().outConnections)
             {
-                if (con.GetConnectorId() == _id) return con;
+                if (con.GetConnectorId() == _id)
+                {
+                    Debug.Log("Found connection with id '" + _id + "'");
+                    return con;
+                }
             }
         }
+        Debug.LogWarning("Could not find Connection with id '" + _id + "'!");
         return null;
     }
-    Linker FindLinkerById(int _id)
+    public Linker FindLinkerById(int _id)
     {
         NodeConnection con = FindConnectionById(_id);
-        if (con != null) return con.linker;
+        if (con != null)
+        {
+            if(con.linker != null)
+            {
+                return con.linker;
+            }
+            Debug.LogWarning("Found NodeConn with id '" + _id + "', but it's linker is null!");
+        }
         return null;
     }
 
@@ -392,20 +419,27 @@ public class NodeManager : MonoBehaviour
         string str = "#PHP NODE GRAPH VERSION 0.1#";
         foreach(NodeObject obj in nodeObjects)
         {
-            str += "~#START-NODE#~";
             Node node = obj.GetNode();
             node.nodeId = Global.STATIC_NODE_ID;
             Global.STATIC_NODE_ID++;
-            str += "#START-NODE#~";
-            str += "#POSITION#~";
+            str += "\n\n~#START-NODE#~";
+            str += "#POS#~";
             str += obj.transform.localPosition.x;
             str += ",";
             str += obj.transform.localPosition.y;
-            str += "~#INPUTS#~";
-            foreach(NodeConnection con in node.inConnections)
+            foreach (NodeConnection con in node.inConnections)
             {
                 con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
                 Global.STATIC_CONNECTOR_ID++;
+            }
+            foreach (NodeConnection con in node.outConnections)
+            {
+                con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
+                Global.STATIC_CONNECTOR_ID++;
+            }
+            str += "~#INPUTS#~";
+            foreach (NodeConnection con in node.inConnections)
+            {
                 if (con.linkedConnection != null)
                 {
                     str += con.linkedConnection.GetConnectorId();
@@ -420,7 +454,7 @@ public class NodeManager : MonoBehaviour
             str += node.GetType();
             str += "~";
             str += node.Serialize();
-            str += "~#END-NODE#";
+            str += "~#END-NODE#~";
         }
         generatedNodeGraph.text = str;
         Global.CopyToClipboard(str);
@@ -437,10 +471,7 @@ public class NodeManager : MonoBehaviour
         string[] lines = str.Split('~');
 
         bool makingNode = false;
-        bool makingFlow = false;
-        bool makingPos = false;
-        bool makingInputs = false;
-        bool makingData = false;
+        string makingType = "";
 
         int makingNodeFlow = -1;
         Vector2 makingNodePos = new Vector2();
@@ -452,43 +483,38 @@ public class NodeManager : MonoBehaviour
             if(line == "#START-NODE#")
             {
                 makingNode = true;
-                makingInputs = false;
-                makingPos = false;
-                makingData = false;
+                makingType = "";
+                makingNodeInputs = new List<int>();
                 makingNodeData = new List<string>();
+                makingNodeFlow = -1;
             }
             else if(line == "#END-NODE#")
             {
-                makingNode = false;
-                makingInputs = false;
-                makingPos = false;
-                makingData = false;
+                makingType = "";
                 CreateNode(makingNodePos, makingNodeFlow, makingNodeInputs, makingNodeData);
+                makingNodeInputs = new List<int>();
+                makingNodeData = new List<string>();
+                makingNodeFlow = -1;
             }
             else if(makingNode)
             {
                 if (line == "#INPUTS#")
                 {
-                    makingInputs = true;
-                    makingData = false;
-                    makingPos = false;
-                    makingInputs = false;
+                    makingType = "inputs";
+                }
+                else if (line == "#FLOW#")
+                {
+                    makingType = "flow";
                 }
                 else if (line == "#DATA#")
                 {
-                    makingInputs = false;
-                    makingData = true;
-                    makingPos = false;
-                    makingInputs = false;
+                    makingType = "data";
                 }
-                else if(line == "#POSITION#")
+                else if(line == "#POS#")
                 {
-                    makingInputs = false;
-                    makingData = false;
-                    makingPos = true;
-                    makingInputs = false;
+                    makingType = "pos";
                 }
-                else if(makingPos)
+                else if(makingType == "pos")
                 {
                     float x, y;
                     bool isFloat = float.TryParse(line.Split(',')[0], out x);
@@ -505,25 +531,32 @@ public class NodeManager : MonoBehaviour
                     }
                     makingNodePos = new Vector2(x, y);
                 }
-                else if(makingInputs)
+                else if(makingType == "inputs")
                 {
-                    int inputInt;
-                    bool isInt = int.TryParse(line, out inputInt);
-                    if(isInt)
+                    string[] split = line.Split(',');
+                    foreach (string c in split)
                     {
-                        makingNodeInputs.Add(inputInt);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("'" + line + "' is not an Integer");
+                        if(c != "")
+                        {
+                            int inputInt;
+                            bool isInt = int.TryParse(c, out inputInt);
+                            if (isInt)
+                            {
+                                makingNodeInputs.Add(inputInt);
+                            }
+                            else
+                            {
+                                Debug.LogWarning("'" + c + "' is not an Integer");
+                            }
+                        }
                     }
                 }
-                else if(makingData)
+                else if(makingType == "data")
                 {
                     makingNodeData.Add(line);
                 }
             }
         }
-        
+        Debug.Log("Pasted " + nodeObjects.Count + " nodes.");
     }
 }

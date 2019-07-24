@@ -12,7 +12,7 @@ public class NodeConnection
     public DataType dataType;
     public GameObject connectionObject;
     public Linker linker;
-    private int m_uniqueId;
+    [SerializeField] private int m_uniqueId;
 
     public int GetConnectorId() { return m_uniqueId; }
     public void SetConnectorId(int _id) { m_uniqueId = _id; }

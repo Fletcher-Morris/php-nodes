@@ -8,7 +8,7 @@ public class NodeObject : MonoBehaviour
 {
     public int GetUniqueId(){return m_node.nodeId;}
     public void SetUniqueId(int newId) { m_node.nodeId = newId; }
-    private Node m_node;
+    [SerializeField] private Node m_node;
     public Node GetNode(){ return m_node; }
     private bool m_initialized;
     public List<GameObject> inObjects;
@@ -29,6 +29,15 @@ public class NodeObject : MonoBehaviour
     public GameObject intUiPrefab;
     public GameObject floatUiPrefab;
     public GameObject stringUiPrefab;
+
+    private void Start()
+    {
+        if(GetNode().m_preConnections.Count >= 1)
+        {
+            Refresh();
+            GetNode().MakePreconnections();
+        }
+    }
 
     public void Init(Node _nodeType, int _id)
     {
@@ -81,7 +90,7 @@ public class NodeObject : MonoBehaviour
         }
     }
 
-    void Refresh()
+    public void Refresh()
     {
         foreach(Transform child in inputTransform)
         {
