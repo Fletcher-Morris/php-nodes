@@ -11,9 +11,7 @@ public class NodeObject : MonoBehaviour
     [SerializeField] private Node m_node;
     public Node GetNode(){ return m_node; }
     private bool m_initialized;
-    public List<GameObject> inObjects;
-    public List<GameObject> outObjects;
-    [SerializeField] private GameObject connectionSprite;
+    public GameObject linkPrefab;
     public List<Image> headerSprites;
     public List<Image> panelSprites;
     public Text nameText;
@@ -32,10 +30,13 @@ public class NodeObject : MonoBehaviour
 
     private void Start()
     {
-        if(GetNode().m_preConnections.Count >= 1)
+        if(GetNode().m_preConnections != null)
         {
-            Refresh();
-            GetNode().MakePreconnections();
+            if (GetNode().m_preConnections.Count >= 1)
+            {
+                Refresh();
+                GetNode().MakePreconnections();
+            }
         }
     }
 
@@ -62,19 +63,6 @@ public class NodeObject : MonoBehaviour
     {
         Init(_nodeType, -1);
     }
-    public void Init(Node _nodeType, NodeConnection _nodeConnection)
-    {
-        Init(_nodeType);
-        foreach(NodeConnection nodeInput in m_node.inConnections)
-        {
-            if(nodeInput.dataType == _nodeConnection.dataType)
-            {
-                _nodeConnection.linkedConnection = nodeInput;
-                nodeInput.linkedConnection = _nodeConnection;
-                break;
-            }
-        }
-    }
 
     public void UpdateColors()
     {
@@ -83,55 +71,43 @@ public class NodeObject : MonoBehaviour
         {
             img.color = headerCol;
         }
-        foreach(GameObject obj in inObjects)
+        foreach(NodeLink link in m_node.inLinks)
         {
-            Linker linker = obj.GetComponent<Linker>();
-            linker.UpdateColors();
+            link.RefreshColors();
+        }
+        foreach (NodeLink link in m_node.outLinks)
+        {
+            link.RefreshColors();
         }
     }
 
     public void Refresh()
     {
-        foreach(Transform child in inputTransform)
-        {
-            Destroy(child.gameObject);
-        }
-        foreach (Transform child in outputTransform)
-        {
-            Destroy(child.gameObject);
-        }
-
         int i = 0;
-        int inputs = m_node.inConnections.Count;
-        foreach(NodeConnection input in m_node.inConnections)
+        int inputs = m_node.inLinks.Count;
+        foreach(NodeLink input in m_node.inLinks)
         {
-            GameObject newObject = Instantiate(connectionSprite, inputTransform);
-            newObject.name = "Node_" + GetUniqueId() + "_Input_" + i.ToString();
-            newObject.transform.GetChild(0).GetComponent<Text>().text = input.connectionName;
+            input.transform.name = "Node_" + GetUniqueId() + "_Input_" + i.ToString();
+            input.transform.GetChild(0).GetComponent<Text>().text = input.linkName;
             Vector3 pos = Vector3.zero;
+            input.isOutput = false;
             pos.x = (float)m_node.width * -0.5f;
-            newObject.transform.localPosition = pos;
-            input.connectionObject = newObject;
-            newObject.GetComponent<Linker>().node = this;
-            newObject.GetComponent<Linker>().connection = input;
-            inObjects.Add(newObject);
+            input.transform.localPosition = pos;
+            input.node = this.m_node;
             i++;
         }
-        i = 0;
-        int outputs = m_node.inConnections.Count;
-        foreach(NodeConnection output in m_node.outConnections)
+        int o = 0;
+        int outputs = m_node.inLinks.Count;
+        foreach(NodeLink output in m_node.outLinks)
         {
-            GameObject newObject = Instantiate(connectionSprite, outputTransform);
-            newObject.name = "Node_" + GetUniqueId() + "_Output_" + i.ToString();
-            newObject.transform.GetChild(1).GetComponent<Text>().text = output.connectionName;
+            output.transform.name = "Node_" + GetUniqueId() + "_Output_" + i.ToString();
+            output.transform.GetChild(1).GetComponent<Text>().text = output.linkName;
             Vector3 pos = Vector3.zero;
+            output.isOutput = true;
             pos.x = (float)m_node.width * 0.5f;
-            newObject.transform.localPosition = pos;
-            output.connectionObject = newObject;
-            newObject.GetComponent<Linker>().node = this;
-            newObject.GetComponent<Linker>().connection = output;
-            outObjects.Add(newObject);
-            i++;
+            output.transform.localPosition = pos;
+            output.node = this.m_node;
+            o++;
         }
     }
     
@@ -146,79 +122,61 @@ public class NodeObject : MonoBehaviour
         foreach (Slider slid in transform.GetComponentsInChildren<Slider>()) { slid.interactable = NodeManager.Singleton.movingNode == null; }
         shadow.SetActive(NodeManager.Singleton.movingNode == this);
 
-        foreach (NodeConnection input in m_node.inConnections)
+        foreach (NodeLink input in m_node.inLinks)
         {
-            if(input.linkedConnection != null)
+            if (input == NodeManager.Singleton.linkingLink)
             {
-                if(input.linkedConnection.connectionObject != null)
-                {
-                    //  Draw Lines
-                    input.linker.bezier.line.enabled = true;
-                    input.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.linkedConnection.dataType);
-                    input.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
-
-                    input.linker.bezier.start.x = input.connectionObject.transform.position.x;
-                    input.linker.bezier.start.y = input.connectionObject.transform.position.y;
-                    input.linker.bezier.start.z = input.connectionObject.transform.position.z;
-
-                    input.linker.bezier.end.x = input.linkedConnection.connectionObject.transform.position.x;
-                    input.linker.bezier.end.y = input.linkedConnection.connectionObject.transform.position.y;
-                    input.linker.bezier.end.z = input.linkedConnection.connectionObject.transform.position.z;
-
-                    input.linker.bezier.UpdatePath();
-                }
-                else
-                {
-                    input.linker.bezier.line.enabled = false;
-                }
-            }
-            else if(input.linker == NodeManager.Singleton.linkingConnection && input.linker != null)
-            {
-                //  Draw Line
-                input.linker.bezier.line.enabled = true;
-                input.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
-                input.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.bezier.line.enabled = true;
+                input.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                input.linker.bezier.start.x = input.connectionObject.transform.position.x;
-                input.linker.bezier.start.y = input.connectionObject.transform.position.y;
-                input.linker.bezier.start.z = input.connectionObject.transform.position.z;
-
-                input.linker.bezier.end.x = mousePos.x;
-                input.linker.bezier.end.y = mousePos.y;
-                input.linker.bezier.end.z = input.connectionObject.transform.position.z;
-
-                input.linker.bezier.UpdatePath();
+                input.bezier.start.x = input.transform.position.x;
+                input.bezier.start.y = input.transform.position.y;
+                input.bezier.start.z = input.transform.position.z;
+                input.bezier.end.x = mousePos.x;
+                input.bezier.end.y = mousePos.y;
+                input.bezier.end.z = input.transform.position.z;
+                input.bezier.UpdatePath();
             }
-            else if(input.linker != null)
+            else if (input.linkedLink != null)
             {
-                input.linker.bezier.line.enabled = false;
+                input.bezier.line.enabled = true;
+                input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.bezier.start.x = input.transform.position.x;
+                input.bezier.start.y = input.transform.position.y;
+                input.bezier.start.z = input.transform.position.z;
+                input.bezier.end.x = input.linkedLink.transform.position.x;
+                input.bezier.end.y = input.linkedLink.transform.position.y;
+                input.bezier.end.z = input.linkedLink.transform.position.z;
+                input.bezier.UpdatePath();
+            }
+            else
+            {
+                input.bezier.line.enabled = false;
             }
         }
 
-        foreach (NodeConnection output in m_node.outConnections)
+        foreach (NodeLink output in m_node.outLinks)
         {
-            if (output.linker == NodeManager.Singleton.linkingConnection && output.linker != null)
+            if (output == NodeManager.Singleton.linkingLink)
             {
                 //  Draw Lines
-                output.linker.bezier.line.enabled = true;
-                output.linker.bezier.line.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
-                output.linker.bezier.line.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
+                output.bezier.line.enabled = true;
+                output.bezier.line.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
+                output.bezier.line.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-
-                output.linker.bezier.start.x = output.connectionObject.transform.position.x;
-                output.linker.bezier.start.y = output.connectionObject.transform.position.y;
-                output.linker.bezier.start.z = output.connectionObject.transform.position.z;
-
-                output.linker.bezier.end.x = mousePos.x;
-                output.linker.bezier.end.y = mousePos.y;
-                output.linker.bezier.end.z = output.connectionObject.transform.position.z;
-
-                output.linker.bezier.UpdatePath();
+                output.bezier.start.x = output.transform.position.x;
+                output.bezier.start.y = output.transform.position.y;
+                output.bezier.start.z = output.transform.position.z;
+                output.bezier.end.x = mousePos.x;
+                output.bezier.end.y = mousePos.y;
+                output.bezier.end.z = output.transform.position.z;
+                output.bezier.UpdatePath();
             }
-            else if (output.linker != null)
+            else
             {
-                output.linker.bezier.line.enabled = false;
+                output.bezier.line.enabled = false;
             }
         }
     }

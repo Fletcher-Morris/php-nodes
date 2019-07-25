@@ -5,7 +5,7 @@ using UnityEngine;
 public static class Global
 {
     public static int STATIC_NODE_ID;
-    public static int STATIC_CONNECTOR_ID;
+    public static int STATIC_LINK_ID;
 
     public static float RemapFloat(float value, float min, float max, float newMin, float newMax)
     {

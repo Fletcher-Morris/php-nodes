@@ -10,8 +10,8 @@ public abstract class Node
     public string tag;
     public bool isFunction = false;
     public List<int> m_preConnections;
-    public List<NodeConnection> inConnections;
-    public List<NodeConnection> outConnections;
+    public List<NodeLink> inLinks;
+    public List<NodeLink> outLinks;
     public NodeObject nodeObject;
     public int width = 150;
     public int height = 150;
@@ -28,11 +28,11 @@ public abstract class Node
     public void MakePreconnections()
     {
         Debug.Log("Forming Preconnections");
-        for (int i = 0; i < inConnections.Count; i++)
+        for (int i = 0; i < inLinks.Count; i++)
         {
             if (i < m_preConnections.Count)
             {
-                NodeManager.Singleton.FormLink(inConnections[i].GetConnectorId(), m_preConnections[i]);
+                NodeManager.Singleton.FormLink(inLinks[i].GetLinkId(), m_preConnections[i]);
             }
             else
             {
@@ -45,5 +45,16 @@ public abstract class Node
     {
         Debug.Log("Setting Preconnections");
         m_preConnections = _conns;
+    }
+
+    public NodeLink CreateNodeLink(Node _node, string _name, bool _output, DataType _type)
+    {
+        GameObject obj;
+        if (_output == false)
+        { obj = GameObject.Instantiate(nodeObject.linkPrefab, nodeObject.inputTransform); }
+        else { obj = GameObject.Instantiate(nodeObject.linkPrefab, nodeObject.outputTransform); }
+        NodeLink link = obj.GetComponent<NodeLink>();
+        link.Create(_node, _name, _output, _type);
+        return link;
     }
 }

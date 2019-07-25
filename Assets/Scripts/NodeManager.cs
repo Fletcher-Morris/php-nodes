@@ -19,8 +19,8 @@ public class NodeManager : MonoBehaviour
 
     public List<NodeObject> nodeObjects;
 
-    public Linker linkingConnection;
-    public bool draggingConnection;
+    public NodeLink linkingLink;
+    public bool draggingLink;
     public NodeObject movingNode;
 
     private int currentZoomLevel = 1;
@@ -85,13 +85,13 @@ public class NodeManager : MonoBehaviour
         return GetTagColor(_type.ToString());
     }
 
-    GameObject GetClosestLinker(Vector3 pos)
+    NodeLink GetClosestNodeLink(Vector3 pos)
     {
-        GameObject closest = null;
+        NodeLink closest = null;
         float dist = 0.0f;
         foreach(NodeObject obj in nodeObjects)
         {
-            foreach(GameObject con in obj.inObjects)
+            foreach(NodeLink con in obj.GetNode().inLinks)
             {
                 float d = Vector3.Distance(con.transform.position, pos);
                 if(d <= dist || closest == null)
@@ -100,7 +100,7 @@ public class NodeManager : MonoBehaviour
                     dist = d;
                 }
             }
-            foreach(GameObject con in obj.outObjects)
+            foreach(NodeLink con in obj.GetNode().outLinks)
             {
                 float d = Vector3.Distance(con.transform.position, pos);
                 if(d <= dist || closest == null)
@@ -114,7 +114,7 @@ public class NodeManager : MonoBehaviour
         else return null;
     }
 
-    public void FormLink(Linker _a, Linker _b)
+    public void FormLink(NodeLink _a, NodeLink _b)
     {
         if(_a != null && _b != null)
         {
@@ -122,17 +122,17 @@ public class NodeManager : MonoBehaviour
             {
                 Debug.Log("Cannot link a node to its self!");
             }
-            else if(linkingConnection.connection.isOutput != _b.connection.isOutput)
+            else if(linkingLink.isOutput != _b.isOutput)
             {
-                Linker _input;
-                Linker _output;
-                if (_a.connection.isOutput) { _input = _b; _output = _a; }
+                NodeLink _input;
+                NodeLink _output;
+                if (_a.isOutput) { _input = _b; _output = _a; }
                 else { _input = _a; _output = _b; }
 
-                _output.connection.linkedConnection = null;
-                _input.connection.linkedConnection = _output.connection;
+                _output.linkedLink = null;
+                _input.linkedLink = _output;
 
-                Debug.Log("Linked Nodes " + _a.node.GetUniqueId() + " & " + _b.node.GetUniqueId());
+                Debug.Log("Linked nodes " + _a.nodeObject.GetUniqueId() + " & " + _b.nodeObject.GetUniqueId());
             }
             else
             {
@@ -141,15 +141,15 @@ public class NodeManager : MonoBehaviour
         }
         else
         {
-            if (_a == null) Debug.Log("Linker a is null!");
-            if (_b == null) Debug.Log("Linker b is null!");
+            if (_a == null) Debug.Log("NodeLink a is null!");
+            if (_b == null) Debug.Log("NodeLink b is null!");
         }
         if (autoGenToggle.isOn) SaveNodeGraph();
     }
     public void FormLink(int _a, int _b)
     {
         if (_a == -1 || _b == -1) return;
-        FormLink(FindLinkerById(_a), FindLinkerById(_b));
+        FormLink(FindLinkById(_a), FindLinkById(_b));
     }
 
     public void CreateNode(string _nodeClassName)
@@ -166,8 +166,8 @@ public class NodeManager : MonoBehaviour
         newNode.GetComponent<NodeObject>().Init((Node)System.Activator.CreateInstance(t));
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
         movingNode = newNode.GetComponent<NodeObject>();
-        if (autoGenToggle.isOn) SaveNodeGraph();
         UpdateGlobalColors();
+        if (autoGenToggle.isOn) SaveNodeGraph();
         Debug.Log("Created Node Of Type '" + _nodeClassName + "'.");
     }
     public void CreateNode(Button _button)
@@ -246,41 +246,28 @@ public class NodeManager : MonoBehaviour
         if (obj != null) return obj.GetNode();
         return null;
     }
-    public NodeConnection FindConnectionById(int _id)
+    public NodeLink FindLinkById(int _id)
     {
         foreach (NodeObject obj in nodeObjects)
         {
-            foreach(NodeConnection con in obj.GetNode().inConnections)
+            foreach(NodeLink link in obj.GetNode().inLinks)
             {
-                if (con.GetConnectorId() == _id)
+                if (link.GetLinkId() == _id)
                 {
-                    Debug.Log("Found connection with id '" + _id + "'");
-                    return con;
+                    Debug.Log("Found link with id '" + _id + "'");
+                    return link;
                 }
             }
-            foreach (NodeConnection con in obj.GetNode().outConnections)
+            foreach (NodeLink link in obj.GetNode().outLinks)
             {
-                if (con.GetConnectorId() == _id)
+                if (link.GetLinkId() == _id)
                 {
-                    Debug.Log("Found connection with id '" + _id + "'");
-                    return con;
+                    Debug.Log("Found link with id '" + _id + "'");
+                    return link;
                 }
             }
         }
-        Debug.LogWarning("Could not find Connection with id '" + _id + "'!");
-        return null;
-    }
-    public Linker FindLinkerById(int _id)
-    {
-        NodeConnection con = FindConnectionById(_id);
-        if (con != null)
-        {
-            if(con.linker != null)
-            {
-                return con.linker;
-            }
-            Debug.LogWarning("Found NodeConn with id '" + _id + "', but it's linker is null!");
-        }
+        Debug.LogWarning("Could not find link with id '" + _id + "'!");
         return null;
     }
 
@@ -292,8 +279,8 @@ public class NodeManager : MonoBehaviour
         if (mousePos.x > safeAreaMax) inSafeZone = false;
         if (movingNode != null) MoveNode();
         else DragConnection();
-        scrollView.horizontal = !draggingConnection;
-        scrollView.vertical = !draggingConnection;
+        scrollView.horizontal = !draggingLink;
+        scrollView.vertical = !draggingLink;
         foreach(NodeObject node in nodeObjects)
         {
             node.DrawVisual();
@@ -318,56 +305,55 @@ public class NodeManager : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            draggingConnection = false;
-            linkingConnection = null;
+            draggingLink = false;
+            linkingLink = null;
             Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            GameObject c = GetClosestLinker(pos);
-            if(c != null)
+            NodeLink closest = GetClosestNodeLink(pos);
+            if(closest != null)
             {
-                Linker closest = c.GetComponent<Linker>();
                 Vector2 p = closest.transform.position;
                 if (Vector3.Distance(p, pos) <= minConnectorDist)
                 {
-                    linkingConnection = closest;
-                    draggingConnection = true;
-                    if(closest.connection.linkedConnection != null)
+                    linkingLink = closest;
+                    draggingLink = true;
+                    if(closest.linkedLink != null)
                     {
-                        closest.connection.linkedConnection.linkedConnection = null;
+                        closest.linkedLink = null;
                     }
-                    closest.connection.linkedConnection = null;
+                    closest.linkedLink = null;
                 }
                 else
                 {
-                    linkingConnection = null;
-                    draggingConnection = false;
+                    linkingLink = null;
+                    draggingLink = false;
                 }
             }
             else
             {
-                linkingConnection = null;
-                draggingConnection = false;
+                linkingLink = null;
+                draggingLink = false;
             }
             if (autoGenToggle.isOn) SaveNodeGraph();
         }
         else if(Input.GetMouseButtonUp(0))
         {
-            if(linkingConnection != null && draggingConnection == true)
+            if(linkingLink != null && draggingLink == true)
             {
                 Vector2 pos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                Linker closest = GetClosestLinker(pos).GetComponent<Linker>();
+                NodeLink closest = GetClosestNodeLink(pos).GetComponent<NodeLink>();
                 Vector2 p = closest.transform.position;
                 if (Vector3.Distance(p, pos) <= minConnectorDist)
                 {
-                    FormLink(linkingConnection, closest);
+                    FormLink(linkingLink, closest);
                 }
             }
-            linkingConnection = null;
-            draggingConnection = false;
+            linkingLink = null;
+            draggingLink = false;
         }
         else if(Input.GetMouseButton(0) == false)
         {
-            draggingConnection = false;
-            linkingConnection = null;
+            draggingLink = false;
+            linkingLink = null;
         }
     }
 
@@ -409,13 +395,13 @@ public class NodeManager : MonoBehaviour
         }
         nodeObjects = new List<NodeObject>();
         Global.STATIC_NODE_ID = 0;
-        Global.STATIC_CONNECTOR_ID = 0;
+        Global.STATIC_LINK_ID = 0;
     }
 
     public void SaveNodeGraph()
     {
         Global.STATIC_NODE_ID = 0;
-        Global.STATIC_CONNECTOR_ID = 0;
+        Global.STATIC_LINK_ID = 0;
         string str = "#PHP NODE GRAPH VERSION 0.1#";
         foreach(NodeObject obj in nodeObjects)
         {
@@ -427,22 +413,22 @@ public class NodeManager : MonoBehaviour
             str += obj.transform.localPosition.x;
             str += ",";
             str += obj.transform.localPosition.y;
-            foreach (NodeConnection con in node.inConnections)
+            foreach (NodeLink link in node.inLinks)
             {
-                con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
-                Global.STATIC_CONNECTOR_ID++;
+                link.SetLinkId(Global.STATIC_LINK_ID);
+                Global.STATIC_LINK_ID++;
             }
-            foreach (NodeConnection con in node.outConnections)
+            foreach (NodeLink link in node.outLinks)
             {
-                con.SetConnectorId(Global.STATIC_CONNECTOR_ID);
-                Global.STATIC_CONNECTOR_ID++;
+                link.SetLinkId(Global.STATIC_LINK_ID);
+                Global.STATIC_LINK_ID++;
             }
             str += "~#INPUTS#~";
-            foreach (NodeConnection con in node.inConnections)
+            foreach (NodeLink link in node.inLinks)
             {
-                if (con.linkedConnection != null)
+                if (link.linkedLink != null)
                 {
-                    str += con.linkedConnection.GetConnectorId();
+                    str += link.linkedLink.GetLinkId();
                 }
                 else
                 {

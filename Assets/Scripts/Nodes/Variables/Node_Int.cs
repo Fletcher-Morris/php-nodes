@@ -16,12 +16,12 @@ public class Node_Int : Node
         field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
-            inConnections= new List<NodeConnection>();
+            inLinks= new List<NodeLink>();
         }
         //  Set up outputs
         {
-            outConnections= new List<NodeConnection>();
-            outConnections.Add(new NodeConnection(this, "Out", true, DataType.IntType));
+            outLinks= new List<NodeLink>();
+            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.IntType));
         }
     }
 

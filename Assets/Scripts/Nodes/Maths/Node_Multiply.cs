@@ -11,14 +11,14 @@ public class Node_Multiply : Node
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {
-            inConnections = new List<NodeConnection>();
-            inConnections.Add(new NodeConnection(this, "A", false, DataType.IntType));
-            inConnections.Add(new NodeConnection(this, "B", false, DataType.IntType));
+            inLinks = new List<NodeLink>();
+            inLinks.Add(CreateNodeLink(this, "A", false, DataType.IntType));
+            inLinks.Add(CreateNodeLink(this, "B", false, DataType.IntType));
         }
         //  Set up outputs
         {
-            outConnections= new List<NodeConnection>();
-            outConnections.Add(new NodeConnection(this, "Out", true, DataType.IntType));
+            outLinks= new List<NodeLink>();
+            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.IntType));
         }
     }
 

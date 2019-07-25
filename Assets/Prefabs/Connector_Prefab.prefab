@@ -170,8 +170,8 @@ GameObject:
   - component: {fileID: 2139745245704544519}
   - component: {fileID: 7702065866353868111}
   - component: {fileID: 6266250134008279893}
-  - component: {fileID: -6286610189068212677}
   - component: {fileID: 4683469599166031002}
+  - component: {fileID: -5742118877139015499}
   m_Layer: 5
   m_Name: Connector_Prefab
   m_TagString: Untagged
@@ -333,27 +333,6 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
---- !u!114 &-6286610189068212677
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4401288628405398579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ef522e635fd8c4b46952117adf69251d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  node: {fileID: 0}
-  connection:
-    connectionName: 
-    isOutput: 0
-    dataType: 0
-    connectionObject: {fileID: 0}
-    linker: {fileID: -6286610189068212677}
-  sprite: {fileID: 7702065866353868111}
-  bezier: {fileID: 4683469599166031002}
 --- !u!114 &4683469599166031002
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -373,3 +352,24 @@ MonoBehaviour:
   start: {x: 0, y: 0, z: 0}
   end: {x: 0, y: 0, z: 0}
   auto: 0
+--- !u!114 &-5742118877139015499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4401288628405398579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19a16028060917542a48548502ee7099, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 7702065866353868111}
+  bezier: {fileID: 4683469599166031002}
+  nodeObject: {fileID: 0}
+  connectionName: 
+  isOutput: 0
+  dataType: 4
+  preLinkConnection: -1
+  linkConnection: {fileID: 0}
+  m_linkId: -1

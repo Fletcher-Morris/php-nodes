@@ -11,16 +11,16 @@ public class Node_Compare : Node
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {
-            inConnections = new List<NodeConnection>();
-            inConnections.Add(new NodeConnection(this, "A", false, DataType.ClassType));
-            inConnections.Add(new NodeConnection(this, "B", false, DataType.ClassType));
-            inConnections.Add(new NodeConnection(this, "Operator", false, DataType.StringType));
+            inLinks = new List<NodeLink>();
+            inLinks.Add(CreateNodeLink(this, "A", false, DataType.ClassType));
+            inLinks.Add(CreateNodeLink(this, "B", false, DataType.ClassType));
+            inLinks.Add(CreateNodeLink(this, "Operator", false, DataType.StringType));
         }
         //  Set up outputs
         {
-            outConnections = new List<NodeConnection>();
-            outConnections.Add(new NodeConnection(this, "True", true, DataType.StringType));
-            outConnections.Add(new NodeConnection(this, "False", true, DataType.StringType));
+            outLinks = new List<NodeLink>();
+            outLinks.Add(CreateNodeLink(this, "True", true, DataType.StringType));
+            outLinks.Add(CreateNodeLink(this, "False", true, DataType.StringType));
         }
     }
 

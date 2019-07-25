@@ -12,13 +12,13 @@ public class Node_Log : Node
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
         {
-            inConnections = new List<NodeConnection>();
-            inConnections.Add(new NodeConnection(this, "Input", false, DataType.StringType));
-            inConnections.Add(new NodeConnection(this, "Email", false, DataType.StringType));
+            inLinks = new List<NodeLink>();
+            inLinks.Add(CreateNodeLink(this, "Input", false, DataType.StringType));
+            inLinks.Add(CreateNodeLink(this, "Email", false, DataType.StringType));
         }
         //  Set up outputs
         {
-            outConnections = new List<NodeConnection>();
+            outLinks = new List<NodeLink>();
         }
     }
 
