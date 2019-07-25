@@ -32,7 +32,7 @@ public class Node_Log : Node
         return "";
     }
 
-    public override void Deserialize(string _data)
+    public override void Deserialize(List<string> _data)
     {
     }
 }

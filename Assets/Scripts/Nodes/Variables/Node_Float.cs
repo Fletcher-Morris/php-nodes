@@ -35,8 +35,8 @@ public class Node_Float : Node
         return field.text.ToString();
     }
 
-    public override void Deserialize(string _data)
+    public override void Deserialize(List<string> _data)
     {
-        field.text = float.Parse(_data).ToString();
+        field.text = float.Parse(_data[1]).ToString();
     }
 }

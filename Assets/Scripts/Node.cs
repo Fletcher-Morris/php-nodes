@@ -23,7 +23,7 @@ public abstract class Node
     }
     public abstract bool Valid();
     public abstract string Serialize();
-    public abstract void Deserialize(string _data);
+    public abstract void Deserialize(List<string> _data);
 
     public void MakePreconnections()
     {

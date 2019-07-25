@@ -182,6 +182,7 @@ public class NodeManager : MonoBehaviour
             movingNode = null;
             Node newNode = GetNewestNode();
             newNode.nodeObject.transform.localPosition = new Vector3(_nodePos.x, _nodePos.y, 10.0f);
+            newNode.Deserialize(_nodeData);
             if(_nodeInputs.Count >= 1) newNode.SetPreconnections(_nodeInputs);
         }
         else
@@ -254,7 +255,6 @@ public class NodeManager : MonoBehaviour
             {
                 if (link.GetLinkId() == _id)
                 {
-                    Debug.Log("Found link with id '" + _id + "'");
                     return link;
                 }
             }
@@ -262,7 +262,6 @@ public class NodeManager : MonoBehaviour
             {
                 if (link.GetLinkId() == _id)
                 {
-                    Debug.Log("Found link with id '" + _id + "'");
                     return link;
                 }
             }

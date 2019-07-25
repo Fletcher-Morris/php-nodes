@@ -31,7 +31,7 @@ public class Node_Add : Node
         return "";
     }
 
-    public override void Deserialize(string _data)
+    public override void Deserialize(List<string> _data)
     {
     }
 }

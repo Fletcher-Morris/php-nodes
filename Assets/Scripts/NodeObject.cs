@@ -141,7 +141,7 @@ public class NodeObject : MonoBehaviour
             else if (input.linkedLink != null)
             {
                 input.bezier.line.enabled = true;
-                input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
+                input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.linkedLink.dataType);
                 input.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
                 input.bezier.start.x = input.transform.position.x;
                 input.bezier.start.y = input.transform.position.y;

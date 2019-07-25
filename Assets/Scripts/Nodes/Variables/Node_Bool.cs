@@ -35,8 +35,8 @@ public class Node_Bool : Node
         return toggle.isOn.ToString();
     }
 
-    public override void Deserialize(string _data)
+    public override void Deserialize(List<string> _data)
     {
-        toggle.isOn = bool.Parse(_data);
+        toggle.isOn = bool.Parse(_data[1]);
     }
 }

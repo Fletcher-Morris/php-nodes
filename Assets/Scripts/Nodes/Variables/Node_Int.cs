@@ -35,8 +35,8 @@ public class Node_Int : Node
         return field.text.ToString();
     }
 
-    public override void Deserialize(string _data)
+    public override void Deserialize(List<string> _data)
     {
-        field.text = int.Parse(_data).ToString();
+        field.text = int.Parse(_data[1]).ToString();
     }
 }
