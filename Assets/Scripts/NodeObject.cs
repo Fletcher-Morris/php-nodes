@@ -17,7 +17,6 @@ public class NodeObject : MonoBehaviour
     public Text nameText;
     public Button moveButton;
     public Button deleteButton;
-    private float connectorSpacing = 0.1f;
     public Vector3 lineOffset;
     public Transform inputTransform;
     public Transform outputTransform;
@@ -184,7 +183,6 @@ public class NodeObject : MonoBehaviour
     public void DeleteNode()
     {
         NodeManager.Singleton.nodeObjects.Remove(this);
-        if (NodeManager.Singleton.autoGenToggle.isOn) NodeManager.Singleton.SaveNodeGraph();
         GameObject.Destroy(gameObject);
     }
 

@@ -13,8 +13,6 @@ public class NodeManager : MonoBehaviour
     public ScrollRect scrollView;
     public Transform buttonArea;
     public GameObject nodePrefab;
-    public Toggle autoGenToggle;
-    public Text generatedNodeGraph;
 
 
     public List<NodeObject> nodeObjects;
@@ -144,7 +142,6 @@ public class NodeManager : MonoBehaviour
             if (_a == null) Debug.Log("NodeLink a is null!");
             if (_b == null) Debug.Log("NodeLink b is null!");
         }
-        if (autoGenToggle.isOn) SaveNodeGraph();
     }
     public void FormLink(int _a, int _b)
     {
@@ -167,7 +164,6 @@ public class NodeManager : MonoBehaviour
         nodeObjects.Add(newNode.GetComponent<NodeObject>());
         movingNode = newNode.GetComponent<NodeObject>();
         UpdateGlobalColors();
-        if (autoGenToggle.isOn) SaveNodeGraph();
         Debug.Log("Created Node Of Type '" + _nodeClassName + "'.");
     }
     public void CreateNode(Button _button)
@@ -201,7 +197,6 @@ public class NodeManager : MonoBehaviour
         {
             node.transform.localPosition = Align(node.transform.localPosition);
         }
-        if (autoGenToggle.isOn) SaveNodeGraph();
     }
     public Vector3 Align(Vector3 pos)
     {
@@ -296,7 +291,6 @@ public class NodeManager : MonoBehaviour
         {
             movingNode.transform.localPosition = new Vector3(movingNode.transform.localPosition.x, movingNode.transform.localPosition.y, 10.0f);
             movingNode = null;
-            if (autoGenToggle.isOn) SaveNodeGraph();
         }
     }
 
@@ -332,7 +326,6 @@ public class NodeManager : MonoBehaviour
                 linkingLink = null;
                 draggingLink = false;
             }
-            if (autoGenToggle.isOn) SaveNodeGraph();
         }
         else if(Input.GetMouseButtonUp(0))
         {
@@ -441,7 +434,6 @@ public class NodeManager : MonoBehaviour
             str += node.Serialize();
             str += "~#END-NODE#~";
         }
-        generatedNodeGraph.text = str;
         Global.CopyToClipboard(str);
         Debug.Log("Saved Node Graph To Clipboard");
     }
