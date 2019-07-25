@@ -122,7 +122,7 @@ public class NodeManager : MonoBehaviour
             {
                 Debug.Log("Cannot link a node to its self!");
             }
-            else if(linkingLink.isOutput != _b.isOutput)
+            else if(_a.isOutput != _b.isOutput)
             {
                 NodeLink _input;
                 NodeLink _output;
@@ -182,7 +182,7 @@ public class NodeManager : MonoBehaviour
             movingNode = null;
             Node newNode = GetNewestNode();
             newNode.nodeObject.transform.localPosition = new Vector3(_nodePos.x, _nodePos.y, 10.0f);
-            newNode.SetPreconnections(_nodeInputs);
+            if(_nodeInputs.Count >= 1) newNode.SetPreconnections(_nodeInputs);
         }
         else
         {
@@ -542,6 +542,14 @@ public class NodeManager : MonoBehaviour
                     makingNodeData.Add(line);
                 }
             }
+        }
+        foreach (NodeObject node in nodeObjects)
+        {
+            node.GetNode().GenLinkIds();
+        }
+        foreach (NodeObject node in nodeObjects)
+        {
+            node.GetNode().MakePreconnections();
         }
         Debug.Log("Pasted " + nodeObjects.Count + " nodes.");
     }

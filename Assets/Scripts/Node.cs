@@ -39,11 +39,18 @@ public abstract class Node
                 Debug.LogWarning("No PreConnection with id '" + i + "' exists!");
             }
         }
+        m_preConnections = new List<int>();
     }
 
     public void SetPreconnections(List<int> _conns)
     {
-        Debug.Log("Setting Preconnections");
+        string str = "";
+        for(int i = 0; i < _conns.Count; i++)
+        {
+            if (i != 0) str += ",";
+            str += _conns[i];
+        }
+        Debug.Log("Setting Preconnections (" + str + ")");
         m_preConnections = _conns;
     }
 
@@ -56,5 +63,17 @@ public abstract class Node
         NodeLink link = obj.GetComponent<NodeLink>();
         link.Create(_node, _name, _output, _type);
         return link;
+    }
+
+    public void GenLinkIds()
+    {
+        foreach(NodeLink link in inLinks)
+        {
+            link.GenId();
+        }
+        foreach (NodeLink link in outLinks)
+        {
+            link.GenId();
+        }
     }
 }

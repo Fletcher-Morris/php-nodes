@@ -17,12 +17,11 @@ public class NodeLink : MonoBehaviour
     public string linkName;
     public bool isOutput;
     public DataType dataType;
-    public int preLinkConnection = -1;
     public NodeLink linkedLink;
 
     [SerializeField] private int m_linkId = -1;
     public void SetLinkId(int _id) { m_linkId = _id; }
-    public int GetLinkId() { return m_linkId; }
+    public int GetLinkId() {Debug.Log("Getting Link ID : " + m_linkId); return m_linkId; }
 
 
     public void Create(Node _node, string _name, bool _output, DataType _type)
@@ -50,14 +49,10 @@ public class NodeLink : MonoBehaviour
         sprite = GetComponent<Image>();
     }
 
-    public void InitLink()
+    public void GenId()
     {
         m_linkId = Global.STATIC_LINK_ID;
         Global.STATIC_LINK_ID++;
-        if(preLinkConnection != -1)
-        {
-
-        }
     }
 
     public void RefreshColors()
