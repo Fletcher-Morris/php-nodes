@@ -544,4 +544,9 @@ public class NodeManager : MonoBehaviour
         }
         Debug.Log("Pasted " + nodeObjects.Count + " nodes.");
     }
+
+    public void GeneratePhpCode()
+    {
+        Global.CopyToClipboard(PhpGenerator.GeneratePhpCode(this));
+    }
 }

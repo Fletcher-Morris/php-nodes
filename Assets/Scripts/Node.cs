@@ -24,6 +24,7 @@ public abstract class Node
     public abstract bool Valid();
     public abstract string Serialize();
     public abstract void Deserialize(List<string> _data);
+    public abstract string GenPhpCode();
 
     public void MakePreconnections()
     {
