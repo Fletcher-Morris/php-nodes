@@ -41,9 +41,9 @@ public class Node_Compare : Node
 
     public override string GenPhpCode()
     {
-        if (PhpGenerator.FunctionExists("Compare") == false)
+        if (PhpGenerator.FunctionExists("Node_Compare") == false)
         {
-            string implem = "function Compare($_a, $_b, $_op, $_true, $_false)\r\n" +
+            string implem = "function Node_Compare($_a, $_b, $_op, $_true, $_false)\r\n" +
             "{\r\n" +
             "\tif($_op == \"==\")\r\n" +
             "\t{\r\n" +
@@ -71,7 +71,7 @@ public class Node_Compare : Node
             "\t}\r\n" +
             "\treturn $_false;\r\n" +
             "}\r\n";
-            PhpGenerator.GenFunction("Compare", implem);
+            PhpGenerator.GenFunction("Node_Compare", implem);
         }
         return null;
     }

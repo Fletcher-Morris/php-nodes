@@ -37,14 +37,14 @@ public class Node_Add : Node
 
     public override string GenPhpCode()
     {
-        if(PhpGenerator.FunctionExists("Add") == false)
+        if(PhpGenerator.FunctionExists("Node_Add") == false)
         {
-            string implem = "function Add($_a, $_b)\r\n" +
+            string implem = "function Node_Add($_a, $_b)\r\n" +
             "{\r\n" +
             "\t$_c = $_a + $_b;\r\n" +
             "\treturn $_c;\r\n" +
             "}\r\n";
-            PhpGenerator.GenFunction("Add", implem);
+            PhpGenerator.GenFunction("Node_Add", implem);
         }
         return null;
     }

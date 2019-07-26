@@ -40,6 +40,15 @@ public class Node_Append : Node
 
     public override string GenPhpCode()
     {
-        return "";
+        if (PhpGenerator.FunctionExists("Node_Append") == false)
+        {
+            string implem = "function Node_Append($_a, $_b, $_c, $_d)\r\n" +
+            "{\r\n" +
+            "\t$_out = $_a.$_b,$_c.$_d;\r\n" +
+            "\treturn $_out;\r\n" +
+            "}\r\n";
+            PhpGenerator.GenFunction("Node_Append", implem);
+        }
+        return null;
     }
 }

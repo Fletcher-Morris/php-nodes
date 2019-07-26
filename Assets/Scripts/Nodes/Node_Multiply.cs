@@ -38,14 +38,14 @@ public class Node_Multiply : Node
 
     public override string GenPhpCode()
     {
-        if (PhpGenerator.FunctionExists("Multiply") == false)
+        if (PhpGenerator.FunctionExists("Node_Multiply") == false)
         {
-            string implem = "function Multiply($_a, $_b)\r\n" +
+            string implem = "function Node_Multiply($_a, $_b)\r\n" +
             "{\r\n" +
             "\t$_c = $_a * $_b;\r\n" +
             "\treturn $_c;\r\n" +
             "}\r\n";
-            PhpGenerator.GenFunction("Multiply", implem);
+            PhpGenerator.GenFunction("Node_Multiply", implem);
         }
         return null;
     }

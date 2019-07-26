@@ -38,14 +38,14 @@ public class Node_Divide : Node
 
     public override string GenPhpCode()
     {
-        if (PhpGenerator.FunctionExists("Divide") == false)
+        if (PhpGenerator.FunctionExists("Node_Divide") == false)
         {
-            string implem = "function Divide($_a, $_b)\r\n" +
+            string implem = "function Node_Divide($_a, $_b)\r\n" +
             "{\r\n" +
             "\t$_c = $_a / $_b;\r\n" +
             "\treturn $_c;\r\n" +
             "}\r\n";
-            PhpGenerator.GenFunction("Divide", implem);
+            PhpGenerator.GenFunction("Node_Divide", implem);
         }
         return null;
     }

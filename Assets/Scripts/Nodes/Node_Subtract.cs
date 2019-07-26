@@ -38,14 +38,14 @@ public class Node_Subtract : Node
 
     public override string GenPhpCode()
     {
-        if (PhpGenerator.FunctionExists("Subtract") == false)
+        if (PhpGenerator.FunctionExists("Node_Subtract") == false)
         {
-            string implem = "function Subtract($_a, $_b)\r\n" +
+            string implem = "function Node_Subtract($_a, $_b)\r\n" +
             "{\r\n" +
             "\t$_c = $_a - $_b;\r\n" +
             "\treturn $_c;\r\n" +
             "}\r\n";
-            PhpGenerator.GenFunction("Subtract", implem);
+            PhpGenerator.GenFunction("Node_Subtract", implem);
         }
         return null;
     }
