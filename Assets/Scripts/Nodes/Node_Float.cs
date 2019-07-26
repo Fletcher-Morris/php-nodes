@@ -3,17 +3,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Node_String : Node
+public class Node_Float : Node
 {
     InputField field;
 
     public override void Setup()
     {
-        nodeName = "STRING";
-        tag = "string";
-        width = 200;
+        nodeName = "FLOAT";
+        tag = "float";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.transform);
+        GameObject obj = GameObject.Instantiate(nodeObject.floatUiPrefab, nodeObject.transform);
         field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
@@ -22,7 +21,7 @@ public class Node_String : Node
         //  Set up outputs
         {
             outLinks= new List<NodeLink>();
-            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.StringType));
+            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.FloatType));
         }
     }
 
@@ -38,6 +37,11 @@ public class Node_String : Node
 
     public override void Deserialize(List<string> _data)
     {
-        field.text = _data[1].ToString();
+        field.text = float.Parse(_data[1]).ToString();
+    }
+
+    public override string GenPhpCode()
+    {
+        return "";
     }
 }

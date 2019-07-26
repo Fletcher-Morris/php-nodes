@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Node_Multiply : Node
+public class Node_Divide : Node
 {
     public override void Setup()
     {
-        nodeName = "MULTIPLY";
+        nodeName = "DIVIDE";
         tag = "maths";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
         //  Set up inputs
@@ -34,5 +34,19 @@ public class Node_Multiply : Node
 
     public override void Deserialize(List<string> _data)
     {
+    }
+
+    public override string GenPhpCode()
+    {
+        if (PhpGenerator.FunctionExists("Divide") == false)
+        {
+            string implem = "function Divide($_a, $_b)\r\n" +
+            "{\r\n" +
+            "\t$_c = $_a / $_b;\r\n" +
+            "\treturn $_c;\r\n" +
+            "}\r\n";
+            PhpGenerator.GenFunction("Divide", implem);
+        }
+        return null;
     }
 }

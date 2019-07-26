@@ -1546,7 +1546,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 519420030}
-        m_MethodName: SaveNodeGraph
+        m_MethodName: GeneratePhpCode
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1640,8 +1640,6 @@ MonoBehaviour:
   buttonArea: {fileID: 363990088}
   nodePrefab: {fileID: 242662487654193784, guid: b56900c1aee015c44b03714b5495b4ba,
     type: 3}
-  autoGenToggle: {fileID: 0}
-  generatedNodeGraph: {fileID: 0}
   nodeObjects: []
   linkingLink: {fileID: 0}
   draggingLink: 0

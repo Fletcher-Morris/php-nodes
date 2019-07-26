@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Node_Bool : Node
+public class Node_Int : Node
 {
-    Toggle toggle;
+    InputField field;
 
     public override void Setup()
     {
-        nodeName = "BOOL";
-        tag = "bool";
+        nodeName = "INT";
+        tag = "int";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.transform);
-        toggle = obj.GetComponent<Toggle>();
+        GameObject obj = GameObject.Instantiate(nodeObject.intUiPrefab, nodeObject.transform);
+        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
             inLinks= new List<NodeLink>();
@@ -21,7 +21,7 @@ public class Node_Bool : Node
         //  Set up outputs
         {
             outLinks= new List<NodeLink>();
-            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.BoolType));
+            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.IntType));
         }
     }
 
@@ -32,11 +32,16 @@ public class Node_Bool : Node
 
     public override string Serialize()
     {
-        return toggle.isOn.ToString();
+        return field.text.ToString();
     }
 
     public override void Deserialize(List<string> _data)
     {
-        toggle.isOn = bool.Parse(_data[1]);
+        field.text = int.Parse(_data[1]).ToString();
+    }
+
+    public override string GenPhpCode()
+    {
+        return "";
     }
 }

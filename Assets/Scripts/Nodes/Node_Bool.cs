@@ -1,24 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
-public class Node_Divide : Node
+public class Node_Bool : Node
 {
+    Toggle toggle;
+
     public override void Setup()
     {
-        nodeName = "DIVIDE";
-        tag = "maths";
+        nodeName = "BOOL";
+        tag = "bool";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
+        GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.transform);
+        toggle = obj.GetComponent<Toggle>();
         //  Set up inputs
         {
-            inLinks = new List<NodeLink>();
-            inLinks.Add(CreateNodeLink(this, "A", false, DataType.IntType));
-            inLinks.Add(CreateNodeLink(this, "B", false, DataType.IntType));
+            inLinks= new List<NodeLink>();
         }
         //  Set up outputs
         {
             outLinks= new List<NodeLink>();
-            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.IntType));
+            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.BoolType));
         }
     }
 
@@ -29,10 +32,16 @@ public class Node_Divide : Node
 
     public override string Serialize()
     {
-        return "";
+        return toggle.isOn.ToString();
     }
 
     public override void Deserialize(List<string> _data)
     {
+        toggle.isOn = bool.Parse(_data[1]);
+    }
+
+    public override string GenPhpCode()
+    {
+        return "";
     }
 }

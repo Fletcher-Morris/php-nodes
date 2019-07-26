@@ -35,4 +35,18 @@ public class Node_Subtract : Node
     public override void Deserialize(List<string> _data)
     {
     }
+
+    public override string GenPhpCode()
+    {
+        if (PhpGenerator.FunctionExists("Subtract") == false)
+        {
+            string implem = "function Subtract($_a, $_b)\r\n" +
+            "{\r\n" +
+            "\t$_c = $_a - $_b;\r\n" +
+            "\treturn $_c;\r\n" +
+            "}\r\n";
+            PhpGenerator.GenFunction("Subtract", implem);
+        }
+        return null;
+    }
 }
