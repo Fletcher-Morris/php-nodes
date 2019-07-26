@@ -40,6 +40,22 @@ public class Node_Connect : Node
 
     public override string GenPhpCode()
     {
-        return "";
+        if (PhpGenerator.FunctionExists("Node_Connect") == false)
+        {
+            string implem = "function Node_Connect($_address, $_username, $_password, $_database)\r\n" +
+            "\t{\r\n" +
+            "\t$_con = mysqli_connect($_address, $_username, $_password, $_database);\r\n" +
+            "\tif(mysqli_connect_errno())\r\n" +
+            "\t{\r\n" +
+            "\treturn false;\r\n" +
+            "\t}\r\n" +
+            "\telse\r\n" +
+            "\t{\r\n" +
+            "\treturn true;\r\n" +
+            "\t}\r\n" +
+            "\t}\r\n";
+            PhpGenerator.GenFunction("Node_Connect", implem);
+        }
+        return null;
     }
 }
