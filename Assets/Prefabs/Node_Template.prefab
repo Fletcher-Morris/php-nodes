@@ -1147,6 +1147,7 @@ MonoBehaviour:
   inputTransform: {fileID: 242662488055604752}
   outputTransform: {fileID: 242662488599840662}
   shadow: {fileID: 242662487687595538}
+  deleteAnimSpeed: 10
   boolUiPrefab: {fileID: 4091665886579943985, guid: 94f18bcb4a6d9094f94ce2f61de17d08,
     type: 3}
   intUiPrefab: {fileID: 7245880135325862016, guid: a42c8bad58d4ea743a5736db5177645f,

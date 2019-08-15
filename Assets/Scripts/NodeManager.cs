@@ -381,13 +381,18 @@ public class NodeManager : MonoBehaviour
 
     public void ClearGraph()
     {
-        foreach (NodeObject obj in nodeObjects)
-        {
-            GameObject.Destroy(obj.gameObject);
-        }
-        nodeObjects = new List<NodeObject>();
+        StartCoroutine(ClearGraphAnim());
         Global.STATIC_NODE_ID = 0;
         Global.STATIC_LINK_ID = 0;
+    }
+    private IEnumerator ClearGraphAnim()
+    {
+        while(nodeObjects.Count > 0)
+        {
+            nodeObjects[0].DeleteNode();
+            yield return new WaitForSeconds(0.025f);
+        }
+        yield return null;
     }
 
     public void SaveNodeGraph()

@@ -21,6 +21,7 @@ public class NodeObject : MonoBehaviour
     public Transform inputTransform;
     public Transform outputTransform;
     public GameObject shadow;
+    public float deleteAnimSpeed = 1.0f;
     [Header("UI Prefabs")]
     public GameObject boolUiPrefab;
     public GameObject intUiPrefab;
@@ -180,15 +181,30 @@ public class NodeObject : MonoBehaviour
         }
     }
 
-    public void DeleteNode()
-    {
-        NodeManager.Singleton.nodeObjects.Remove(this);
-        GameObject.Destroy(gameObject);
-    }
-
     public void MoveNode()
     {
         transform.SetAsLastSibling();
         NodeManager.Singleton.movingNode = this;
+    }
+
+    public void DeleteNode()
+    {
+        StartCoroutine(DeleteNodeAnim());
+    }
+
+    private IEnumerator DeleteNodeAnim()
+    {
+        NodeManager.Singleton.nodeObjects.Remove(this);
+        bool deleted = false;
+        while (deleted == false)
+        {
+            Vector3 newScale = transform.localScale;
+            newScale.x -= deleteAnimSpeed * Time.deltaTime;
+            newScale.y -= deleteAnimSpeed * Time.deltaTime;
+            transform.localScale = newScale;
+            if (transform.localScale.x < 0.01f) deleted = true;
+            yield return new WaitForEndOfFrame();
+        }
+        GameObject.Destroy(gameObject);
     }
 }
