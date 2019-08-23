@@ -13,6 +13,7 @@ public class NodeObject : MonoBehaviour
     private bool m_initialized;
     public GameObject linkPrefab;
     public GameObject panelObject;
+    public GameObject panelMask;
     public List<Image> headerSprites;
     public List<Image> panelSprites;
     public List<Sprite> panelAssets;
@@ -132,12 +133,12 @@ public class NodeObject : MonoBehaviour
                 input.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
                 input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.dataType);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                input.bezier.start.x = input.transform.position.x;
-                input.bezier.start.y = input.transform.position.y;
-                input.bezier.start.z = input.transform.position.z;
+                input.bezier.start.x = input.GetLinkPosition().x;
+                input.bezier.start.y = input.GetLinkPosition().y;
+                input.bezier.start.z = input.GetLinkPosition().z;
                 input.bezier.end.x = mousePos.x;
                 input.bezier.end.y = mousePos.y;
-                input.bezier.end.z = input.transform.position.z;
+                input.bezier.end.z = input.GetLinkPosition().z;
                 input.bezier.UpdatePath();
             }
             else if (input.linkedLink != null)
@@ -145,12 +146,12 @@ public class NodeObject : MonoBehaviour
                 input.bezier.line.enabled = true;
                 input.bezier.line.endColor = NodeManager.Singleton.GetTagColor(input.linkedLink.dataType);
                 input.bezier.line.startColor = NodeManager.Singleton.GetTagColor(input.dataType);
-                input.bezier.start.x = input.transform.position.x;
-                input.bezier.start.y = input.transform.position.y;
-                input.bezier.start.z = input.transform.position.z;
-                input.bezier.end.x = input.linkedLink.transform.position.x;
-                input.bezier.end.y = input.linkedLink.transform.position.y;
-                input.bezier.end.z = input.linkedLink.transform.position.z;
+                input.bezier.start.x = input.GetLinkPosition().x;
+                input.bezier.start.y = input.GetLinkPosition().y;
+                input.bezier.start.z = input.GetLinkPosition().z;
+                input.bezier.end.x = input.linkedLink.GetLinkPosition().x;
+                input.bezier.end.y = input.linkedLink.GetLinkPosition().y;
+                input.bezier.end.z = input.linkedLink.GetLinkPosition().z;
                 input.bezier.UpdatePath();
             }
             else
@@ -168,12 +169,12 @@ public class NodeObject : MonoBehaviour
                 output.bezier.line.startColor = NodeManager.Singleton.GetTagColor(output.dataType);
                 output.bezier.line.endColor = NodeManager.Singleton.GetTagColor(output.dataType);
                 Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                output.bezier.start.x = output.transform.position.x;
-                output.bezier.start.y = output.transform.position.y;
-                output.bezier.start.z = output.transform.position.z;
+                output.bezier.start.x = output.GetLinkPosition().x;
+                output.bezier.start.y = output.GetLinkPosition().y;
+                output.bezier.start.z = output.GetLinkPosition().z;
                 output.bezier.end.x = mousePos.x;
                 output.bezier.end.y = mousePos.y;
-                output.bezier.end.z = output.transform.position.z;
+                output.bezier.end.z = output.GetLinkPosition().z;
                 output.bezier.UpdatePath();
             }
             else
@@ -212,6 +213,7 @@ public class NodeObject : MonoBehaviour
 
     private float m_lastTitleClick = 0.0f;
     private bool m_minimised = false;
+    public bool IsMinimised() { return m_minimised; }
     public void TitleClick()
     {
         float t = Time.time;
@@ -233,22 +235,54 @@ public class NodeObject : MonoBehaviour
 
     private IEnumerator MinimiseAnim()
     {
-        panelObject.SetActive(false);
+        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
+        m_minimised = true;
+        bool animating = true;
+        while (animating == true)
+        {
+            float y = panelRect.anchoredPosition.y;
+            if(y >= panelRect.sizeDelta.y)
+            {
+                animating = false;
+                panelRect.anchoredPosition = new Vector2(0.0f, panelRect.sizeDelta.y);
+            }
+            else
+            {
+                y += Time.deltaTime * 1000;
+                panelRect.anchoredPosition = new Vector2(0.0f, y);
+            }
+            yield return new WaitForEndOfFrame();
+        }
         headerSprites[6].sprite = panelAssets[1];
         headerSprites[7].sprite = panelAssets[0];
         headerSprites[8].sprite = panelAssets[2];
         shadow.GetComponent<RectTransform>().SetBottom(90.0f);
-        m_minimised = true;
         yield return null;
     }
 
     private IEnumerator MaximiseAnim()
     {
-        panelObject.SetActive(true);
         headerSprites[6].sprite = panelAssets[4];
         headerSprites[7].sprite = panelAssets[4];
         headerSprites[8].sprite = panelAssets[4];
         shadow.GetComponent<RectTransform>().SetBottom(-20.0f);
+        RectTransform panelRect = panelObject.GetComponent<RectTransform>();
+        bool animating = true;
+        while (animating == true)
+        {
+            float y = panelRect.anchoredPosition.y;
+            if (y <= 0.0f)
+            {
+                animating = false;
+                panelRect.anchoredPosition = new Vector2(0.0f, 0.0f);
+            }
+            else
+            {
+                y -= Time.deltaTime * 1000;
+                panelRect.anchoredPosition = new Vector2(0.0f, y);
+            }
+            yield return new WaitForEndOfFrame();
+        }
         m_minimised = false;
         yield return null;
     }

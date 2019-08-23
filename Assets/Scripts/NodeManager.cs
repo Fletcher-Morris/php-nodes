@@ -89,22 +89,25 @@ public class NodeManager : MonoBehaviour
         float dist = 0.0f;
         foreach(NodeObject obj in nodeObjects)
         {
-            foreach(NodeLink con in obj.GetNode().inLinks)
+            if(obj.IsMinimised() == false)
             {
-                float d = Vector3.Distance(con.transform.position, pos);
-                if(d <= dist || closest == null)
+                foreach (NodeLink con in obj.GetNode().inLinks)
                 {
-                    closest = con;
-                    dist = d;
+                    float d = Vector3.Distance(con.transform.position, pos);
+                    if (d <= dist || closest == null)
+                    {
+                        closest = con;
+                        dist = d;
+                    }
                 }
-            }
-            foreach(NodeLink con in obj.GetNode().outLinks)
-            {
-                float d = Vector3.Distance(con.transform.position, pos);
-                if(d <= dist || closest == null)
+                foreach (NodeLink con in obj.GetNode().outLinks)
                 {
-                    closest = con;
-                    dist = d;
+                    float d = Vector3.Distance(con.transform.position, pos);
+                    if (d <= dist || closest == null)
+                    {
+                        closest = con;
+                        dist = d;
+                    }
                 }
             }
         }

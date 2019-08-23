@@ -59,4 +59,16 @@ public class NodeLink : MonoBehaviour
     {
         sprite.color = NodeManager.Singleton.GetTagColor(dataType);
     }
+
+    public Vector3 GetLinkPosition()
+    {
+        Vector3 result = transform.position;
+
+        if(nodeObject.IsMinimised())
+        {
+            result.y = nodeObject.headerSprites[4].transform.position.y;
+        }
+
+        return result;
+    }
 }
