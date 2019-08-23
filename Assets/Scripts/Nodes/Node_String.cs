@@ -13,7 +13,7 @@ public class Node_String : Node
         tag = "string";
         width = 200;
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.transform);
+        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.panelObject.transform);
         field = obj.GetComponent<InputField>();
         //  Set up inputs
         {

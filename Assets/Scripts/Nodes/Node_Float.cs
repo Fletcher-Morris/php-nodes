@@ -12,7 +12,7 @@ public class Node_Float : Node
         nodeName = "FLOAT";
         tag = "float";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.floatUiPrefab, nodeObject.transform);
+        GameObject obj = GameObject.Instantiate(nodeObject.floatUiPrefab, nodeObject.panelObject.transform);
         field = obj.GetComponent<InputField>();
         //  Set up inputs
         {

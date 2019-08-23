@@ -12,7 +12,7 @@ public class Node_Bool : Node
         nodeName = "BOOL";
         tag = "bool";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.transform);
+        GameObject obj = GameObject.Instantiate(nodeObject.boolUiPrefab, nodeObject.panelObject.transform);
         toggle = obj.GetComponent<Toggle>();
         //  Set up inputs
         {

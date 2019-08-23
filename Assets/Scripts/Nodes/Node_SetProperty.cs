@@ -1,27 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Node_Int : Node
+public class Node_SetProperty : Node
 {
-    InputField field;
-
     public override void Setup()
     {
-        nodeName = "INT";
-        tag = "int";
+        nodeName = "SET PROPERTY";
+        tag = "php";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.intUiPrefab, nodeObject.panelObject.transform);
-        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
-            inLinks= new List<NodeLink>();
+            inLinks = new List<NodeLink>();
+            inLinks.Add(CreateNodeLink(this, "Instance", false, DataType.ClassType));
+            inLinks.Add(CreateNodeLink(this, "Property", false, DataType.StringType));
+            inLinks.Add(CreateNodeLink(this, "Value", false, DataType.ClassType));
         }
         //  Set up outputs
         {
-            outLinks= new List<NodeLink>();
-            outLinks.Add(CreateNodeLink(this, "Out", true, DataType.IntType));
+            outLinks = new List<NodeLink>();
         }
     }
 
@@ -32,16 +29,16 @@ public class Node_Int : Node
 
     public override string Serialize()
     {
-        return field.text.ToString();
+        return "";
     }
 
     public override void Deserialize(List<string> _data)
     {
-        field.text = int.Parse(_data[1]).ToString();
     }
 
     public override string GenPhpCode()
     {
-        return "";
+
+        return null;
     }
 }

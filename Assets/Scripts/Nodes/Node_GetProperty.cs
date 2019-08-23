@@ -1,25 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-public class Node_Variable : Node
+public class Node_GetProperty : Node
 {
-    InputField field;
-
     public override void Setup()
     {
-        nodeName = "VARIABLE";
-        tag = "sql";
-        width = 200;
+        nodeName = "GET PROPERTY";
+        tag = "php";
         nodeObject.GetComponent<RectTransform>().sizeDelta = new Vector2(width, height);
-        GameObject obj = GameObject.Instantiate(nodeObject.stringUiPrefab, nodeObject.panelObject.transform);
-        field = obj.GetComponent<InputField>();
         //  Set up inputs
         {
             inLinks = new List<NodeLink>();
-            inLinks.Add(CreateNodeLink(this, "Var Name", false, DataType.StringType));
-            inLinks.Add(CreateNodeLink(this, "In", false, DataType.ClassType));
+            inLinks.Add(CreateNodeLink(this, "Instance", false, DataType.ClassType));
+            inLinks.Add(CreateNodeLink(this, "Property", false, DataType.StringType));
         }
         //  Set up outputs
         {
@@ -35,18 +29,16 @@ public class Node_Variable : Node
 
     public override string Serialize()
     {
-        return field.text.ToString();
+        return "";
     }
 
     public override void Deserialize(List<string> _data)
     {
-
     }
 
     public override string GenPhpCode()
     {
-        string varName = PhpGenerator.GenUniqueVarName("");
-
-        return "";
+        
+        return null;
     }
 }

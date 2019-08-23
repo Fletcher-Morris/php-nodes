@@ -12,8 +12,10 @@ public class NodeObject : MonoBehaviour
     public Node GetNode(){ return m_node; }
     private bool m_initialized;
     public GameObject linkPrefab;
+    public GameObject panelObject;
     public List<Image> headerSprites;
     public List<Image> panelSprites;
+    public List<Sprite> panelAssets;
     public Text nameText;
     public Button moveButton;
     public Button deleteButton;
@@ -206,5 +208,48 @@ public class NodeObject : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
         GameObject.Destroy(gameObject);
+    }
+
+    private float m_lastTitleClick = 0.0f;
+    private bool m_minimised = false;
+    public void TitleClick()
+    {
+        float t = Time.time;
+        if (m_lastTitleClick + 0.4f > t)
+        {
+            //  Double Click
+            Debug.Log("DOUBLE CLICK");
+            m_lastTitleClick = 0.0f;
+            if (m_minimised == false) StartCoroutine(MinimiseAnim());
+            else StartCoroutine(MaximiseAnim());
+        }
+        else
+        {
+            //  Single Click
+            Debug.Log("CLICK");
+            m_lastTitleClick = t;
+        }
+    }
+
+    private IEnumerator MinimiseAnim()
+    {
+        panelObject.SetActive(false);
+        headerSprites[6].sprite = panelAssets[1];
+        headerSprites[7].sprite = panelAssets[0];
+        headerSprites[8].sprite = panelAssets[2];
+        shadow.GetComponent<RectTransform>().SetBottom(90.0f);
+        m_minimised = true;
+        yield return null;
+    }
+
+    private IEnumerator MaximiseAnim()
+    {
+        panelObject.SetActive(true);
+        headerSprites[6].sprite = panelAssets[4];
+        headerSprites[7].sprite = panelAssets[4];
+        headerSprites[8].sprite = panelAssets[4];
+        shadow.GetComponent<RectTransform>().SetBottom(-20.0f);
+        m_minimised = false;
+        yield return null;
     }
 }

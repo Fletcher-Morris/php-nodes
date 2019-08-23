@@ -44,7 +44,7 @@ public class NodeManager : MonoBehaviour
         foreach(Button btn in buttonArea.GetComponentsInChildren<Button>())
         {
             btn.transform.GetChild(0).GetComponent<Text>().text = btn.transform.name;
-            System.Type t = System.Type.GetType("Node_" + btn.transform.name);
+            System.Type t = System.Type.GetType("Node_" + btn.transform.name.Replace(" ", ""));
             if(t == null)
             {
                 btn.interactable = false;
@@ -151,6 +151,7 @@ public class NodeManager : MonoBehaviour
 
     public void CreateNode(string _nodeClassName)
     {
+        _nodeClassName = _nodeClassName.Replace(" ", "");
         System.Type t = System.Type.GetType(_nodeClassName);
         if(t == null)
         {
