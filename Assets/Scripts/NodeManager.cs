@@ -14,6 +14,10 @@ public class NodeManager : MonoBehaviour
     public Transform buttonArea;
     public GameObject nodePrefab;
 
+    public GameObject createNodeButtonPrefab;
+    public GameObject createNodeSeparatorPrefab;
+    public List<string> nodeTypesList = new List<string>();
+
 
     public List<NodeObject> nodeObjects;
 
@@ -37,20 +41,42 @@ public class NodeManager : MonoBehaviour
     {
         Singleton = this;
         UpdateGlobalColors();
-        foreach(Text txt in buttonArea.GetComponentsInChildren<Text>())
+        RefreshCreateNodeButtons();
+    }
+
+    public void RefreshCreateNodeButtons()
+    {
+        foreach(Transform t in buttonArea)
         {
-            txt.text = txt.transform.name;
+            Destroy(t.gameObject);
         }
-        foreach(Button btn in buttonArea.GetComponentsInChildren<Button>())
+        int count = 0;
+        foreach(string s in nodeTypesList)
         {
-            btn.transform.GetChild(0).GetComponent<Text>().text = btn.transform.name;
-            System.Type t = System.Type.GetType("Node_" + btn.transform.name.Replace(" ", ""));
-            if(t == null)
+            if(s.StartsWith("~"))
             {
-                btn.interactable = false;
+                //  Separtor
+                string n = s.Remove(0,1);
+                GameObject newSeparator = Instantiate(createNodeSeparatorPrefab, buttonArea);
+                newSeparator.name = ($"~ {n} ~");
+                newSeparator.GetComponent<Text>().text = n;
+                count++;
+            }
+            else
+            {
+                //  Button
+                System.Type t = System.Type.GetType("Node_" + s.Replace(" ", ""));
+                if (t != null)
+                {
+                    GameObject newButton = Instantiate(createNodeButtonPrefab, buttonArea);
+                    newButton.name = s;
+                    newButton.GetComponentInChildren<Text>().text = s;
+                    count++;
+                }
             }
         }
-        buttonArea.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonArea.GetComponent<RectTransform>().sizeDelta.x, 50 * buttonArea.childCount);
+        buttonArea.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonArea.GetComponent<RectTransform>().sizeDelta.x, 50 * count);
+        Debug.Log($"Refreshed Button Area : {count} Valid");
     }
 
     public void UpdateGlobalColors()
