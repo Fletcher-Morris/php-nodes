@@ -13,6 +13,7 @@ public class NodeManager : MonoBehaviour
     public ScrollRect scrollView;
     public Transform buttonArea;
     public GameObject nodePrefab;
+    public CanvasScaler scaler;
 
     public GameObject createNodeButtonPrefab;
     public GameObject createNodeSeparatorPrefab;
@@ -42,6 +43,7 @@ public class NodeManager : MonoBehaviour
         Singleton = this;
         UpdateGlobalColors();
         RefreshCreateNodeButtons();
+        SetUiScale(PlayerPrefs.GetFloat("scale"));
     }
 
     public void RefreshCreateNodeButtons()
@@ -77,6 +79,20 @@ public class NodeManager : MonoBehaviour
         }
         buttonArea.GetComponent<RectTransform>().sizeDelta = new Vector2(buttonArea.GetComponent<RectTransform>().sizeDelta.x, 50 * count);
         Debug.Log($"Refreshed Button Area : {count} Valid");
+    }
+
+    public void UiScaleUp()
+    {
+        SetUiScale(scaler.scaleFactor + 0.5f);
+    }
+    public void UiScaleDown()
+    {
+        SetUiScale(scaler.scaleFactor - 0.5f);
+    }
+    private void SetUiScale(float scale)
+    {
+        scaler.scaleFactor = Mathf.Clamp(scale, 1.0f, 2.5f);
+        PlayerPrefs.SetFloat("scale", scaler.scaleFactor);
     }
 
     public void UpdateGlobalColors()
@@ -308,6 +324,11 @@ public class NodeManager : MonoBehaviour
         foreach(NodeObject node in nodeObjects)
         {
             node.DrawVisual();
+        }
+        if(Input.GetKey(KeyCode.LeftControl))
+        {
+            if (Input.GetKeyDown(KeyCode.RightBracket)) UiScaleUp();
+            if (Input.GetKeyDown(KeyCode.LeftBracket)) UiScaleDown();
         }
     }
 

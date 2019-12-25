@@ -984,6 +984,7 @@ MonoBehaviour:
   buttonArea: {fileID: 363990088}
   nodePrefab: {fileID: 242662487654193784, guid: b56900c1aee015c44b03714b5495b4ba,
     type: 3}
+  scaler: {fileID: 1309473270}
   createNodeButtonPrefab: {fileID: 2067521135312198638, guid: 0f76f63f0fb8d4a8a8c065eaf2c01fbf,
     type: 3}
   createNodeSeparatorPrefab: {fileID: 3929417114659033618, guid: 895be922ca7c148d8a550ecc15a2eff3,
@@ -2098,8 +2099,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 879770796}
   m_HandleRect: {fileID: 879770795}
   m_Direction: 2
-  m_Value: 1.0000002
-  m_Size: 0.5183334
+  m_Value: 1.0000008
+  m_Size: 0.8816666
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2490,10 +2491,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ScaleFactor: 1.5
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 1
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
