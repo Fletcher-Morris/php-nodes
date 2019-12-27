@@ -329,6 +329,7 @@ public class NodeManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.RightBracket)) UiScaleUp();
             if (Input.GetKeyDown(KeyCode.LeftBracket)) UiScaleDown();
+            if (Input.GetKeyDown(KeyCode.F)) Screen.fullScreen = !Screen.fullScreen;
         }
     }
 

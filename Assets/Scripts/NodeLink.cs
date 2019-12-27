@@ -64,10 +64,9 @@ public class NodeLink : MonoBehaviour
     {
         Vector3 result = transform.position;
 
-        if(nodeObject.IsMinimised())
-        {
-            result.y = nodeObject.headerSprites[4].transform.position.y;
-        }
+        float y = result.y;
+        if (y >= nodeObject.headerSprites[4].transform.position.y || nodeObject.IsMinimised()) y = nodeObject.headerSprites[4].transform.position.y;
+        result.y = y;
 
         return result;
     }

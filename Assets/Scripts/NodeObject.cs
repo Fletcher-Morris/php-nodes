@@ -236,7 +236,6 @@ public class NodeObject : MonoBehaviour
     private IEnumerator MinimiseAnim()
     {
         RectTransform panelRect = panelObject.GetComponent<RectTransform>();
-        m_minimised = true;
         bool animating = true;
         while (animating == true)
         {
@@ -257,11 +256,13 @@ public class NodeObject : MonoBehaviour
         headerSprites[7].sprite = panelAssets[0];
         headerSprites[8].sprite = panelAssets[2];
         shadow.GetComponent<RectTransform>().SetBottom(90.0f);
+        m_minimised = true;
         yield return null;
     }
 
     private IEnumerator MaximiseAnim()
     {
+        m_minimised = false;
         headerSprites[6].sprite = panelAssets[4];
         headerSprites[7].sprite = panelAssets[4];
         headerSprites[8].sprite = panelAssets[4];
@@ -283,7 +284,6 @@ public class NodeObject : MonoBehaviour
             }
             yield return new WaitForEndOfFrame();
         }
-        m_minimised = false;
         yield return null;
     }
 }
